@@ -1,22 +1,124 @@
 export interface Milestone {
     id: string;
+    number: string;
     title: string;
-    description: string;
+    subject: string;
+    question: string;
+    options: string[];
+    cta: string;
+    isUnlocked: boolean;
     isCompleted: boolean;
 }
 
 export const milestones: Milestone[] = [
     {
-        id: '1',
-        title: 'Earth Orbit',
-        description: 'Establish stable low earth orbit.',
+        id: '01-launch',
+        number: '01',
+        title: 'Launch',
+        subject: 'Payload check',
+        question: 'How many high-capacity deals were successfully injected into the 2025 orbital stream?',
+        options: ['1', '2', '3', '4'],
+        cta: 'INITIALIZE STREAM',
+        isUnlocked: true,
         isCompleted: false,
     },
     {
-        id: '2',
-        title: 'Lunar Injection',
-        description: 'Perform trans-lunar injection burn.',
+        id: '02-ascent',
+        number: '02',
+        title: 'Ascent',
+        subject: 'Velocity Check',
+        question: 'At what frequency were daily transaction pings processed throughout the fiscal flight?',
+        options: ['1', '2', '3', '4'],
+        cta: 'STABILIZE ORBIT',
+        isUnlocked: false,
         isCompleted: false,
     },
-    // Add more milestones as needed
+    {
+        id: '03-burn',
+        number: '03',
+        title: 'Burn',
+        subject: 'System Stress Test',
+        question: 'Total analytical core hours dedicated to risk-mitigation and underwriting protocols?',
+        options: ['1', '2', '3', '4'],
+        cta: 'ENGAGE ANALYTICS',
+        isUnlocked: false,
+        isCompleted: false,
+    },
+    {
+        id: '04-vector',
+        number: '04',
+        title: 'Vector',
+        subject: 'Expansion Map',
+        question: 'How many diverse market sectors (Small & Large) are currently receiving Canada ICI telemetry?',
+        options: ['1', '2', '3', '4'],
+        cta: 'MAPPING COMPLETE',
+        isUnlocked: false,
+        isCompleted: false,
+    },
+    {
+        id: '05-mid-course',
+        number: '05',
+        title: 'Mid-Course',
+        subject: 'Life Support Expansion',
+        question: 'By what percentage did the mission crew capacity increase during the 2025 cycle?',
+        options: ['1', '2', '3', '4'],
+        cta: 'SYNC CREW LOGS',
+        isUnlocked: false,
+        isCompleted: false,
+    },
+    {
+        id: '06-junction',
+        number: '06',
+        title: 'Junction',
+        subject: 'Operational Longevity',
+        question: 'How many senior officers (5/10/20yr) have reached decade-level flight milestones?',
+        options: ['1', '2', '3', '4'],
+        cta: 'VERIFY TENURE',
+        isUnlocked: false,
+        isCompleted: false,
+    },
+    {
+        id: '07-apex',
+        number: '07',
+        title: 'Apex',
+        subject: 'Physical Readiness',
+        question: 'Total kilometers logged by the crew during the 2025 Wellness Initiative?',
+        options: ['1', '2', '3', '4'],
+        cta: 'VALIDATE VITALS',
+        isUnlocked: false,
+        isCompleted: false,
+    },
+    {
+        id: '08-approach',
+        number: '08',
+        title: 'Approach',
+        subject: 'Command Summit',
+        question: 'How many strategic leads converged for the 2025 high-altitude retreat?',
+        options: ['1', '2', '3', '4'],
+        cta: 'LOCK APPROACH',
+        isUnlocked: false,
+        isCompleted: false,
+    },
+    {
+        id: '09-far-side',
+        number: '09',
+        title: 'Signal Broadcast',
+        subject: 'Signal Broadcast',
+        question: 'How many sector-wide industry events were hosted through the Canada ICI hub?',
+        options: ['1', '2', '3', '4'],
+        cta: 'BROADCAST DATA',
+        isUnlocked: false,
+        isCompleted: false,
+    },
+    {
+        id: '10-splashdown',
+        number: '10',
+        title: 'Splashdown',
+        subject: 'Impact Shielding',
+        question: 'Total charitable organizations supported by the 2025 mission payload?',
+        options: ['1', '2', '3', '4'],
+        cta: 'SEAL ARCHIVES',
+        isUnlocked: false,
+        isCompleted: false,
+    },
 ];
