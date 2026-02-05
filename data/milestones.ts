@@ -5,6 +5,7 @@ export interface Milestone {
     subject: string;
     question: string;
     options: string[];
+    correctAnswer: string;
     cta: string;
     isUnlocked: boolean;
     isCompleted: boolean;
@@ -18,6 +19,7 @@ export const milestones: Milestone[] = [
         subject: 'Payload check',
         question: 'How many high-capacity deals were successfully injected into the 2025 orbital stream?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'INITIALIZE STREAM',
         isUnlocked: true,
         isCompleted: false,
@@ -29,6 +31,7 @@ export const milestones: Milestone[] = [
         subject: 'Velocity Check',
         question: 'At what frequency were daily transaction pings processed throughout the fiscal flight?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'STABILIZE ORBIT',
         isUnlocked: false,
         isCompleted: false,
@@ -40,6 +43,7 @@ export const milestones: Milestone[] = [
         subject: 'System Stress Test',
         question: 'Total analytical core hours dedicated to risk-mitigation and underwriting protocols?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'ENGAGE ANALYTICS',
         isUnlocked: false,
         isCompleted: false,
@@ -51,6 +55,7 @@ export const milestones: Milestone[] = [
         subject: 'Expansion Map',
         question: 'How many diverse market sectors (Small & Large) are currently receiving Canada ICI telemetry?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'MAPPING COMPLETE',
         isUnlocked: false,
         isCompleted: false,
@@ -62,6 +67,7 @@ export const milestones: Milestone[] = [
         subject: 'Life Support Expansion',
         question: 'By what percentage did the mission crew capacity increase during the 2025 cycle?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'SYNC CREW LOGS',
         isUnlocked: false,
         isCompleted: false,
@@ -73,6 +79,7 @@ export const milestones: Milestone[] = [
         subject: 'Operational Longevity',
         question: 'How many senior officers (5/10/20yr) have reached decade-level flight milestones?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'VERIFY TENURE',
         isUnlocked: false,
         isCompleted: false,
@@ -84,6 +91,7 @@ export const milestones: Milestone[] = [
         subject: 'Physical Readiness',
         question: 'Total kilometers logged by the crew during the 2025 Wellness Initiative?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'VALIDATE VITALS',
         isUnlocked: false,
         isCompleted: false,
@@ -95,6 +103,7 @@ export const milestones: Milestone[] = [
         subject: 'Command Summit',
         question: 'How many strategic leads converged for the 2025 high-altitude retreat?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'LOCK APPROACH',
         isUnlocked: false,
         isCompleted: false,
@@ -106,6 +115,7 @@ export const milestones: Milestone[] = [
         subject: 'Signal Broadcast',
         question: 'How many sector-wide industry events were hosted through the Canada ICI hub?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'BROADCAST DATA',
         isUnlocked: false,
         isCompleted: false,
@@ -117,6 +127,7 @@ export const milestones: Milestone[] = [
         subject: 'Impact Shielding',
         question: 'Total charitable organizations supported by the 2025 mission payload?',
         options: ['1', '2', '3', '4'],
+        correctAnswer: '1',
         cta: 'SEAL ARCHIVES',
         isUnlocked: false,
         isCompleted: false,
