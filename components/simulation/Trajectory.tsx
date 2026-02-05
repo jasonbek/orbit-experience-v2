@@ -7,9 +7,10 @@ import { getTrajectoryNodes } from "@/lib/bezier";
 import { cn } from "@/lib/utils";
 
 export function Trajectory() {
-    const currentMilestoneIndex = useStore((state) => state.currentMilestoneIndex);
+    const currentStep = useStore((state) => state.currentStep);
     const unlockedIndex = useStore((state) => state.unlockedIndex);
-    const checkAnswer = useStore((state) => state.checkAnswer);
+
+    const currentIdx = milestones.findIndex(m => m.id === currentStep);
 
     // SVG ViewBox dimensions (matches the 16:9 aspect ratio coordinate system)
     const width = 1920;
@@ -52,7 +53,7 @@ export function Trajectory() {
                     fill="none"
                     initial={{ pathLength: 0 }}
                     animate={{
-                        // Calculate percentage based on current milestone
+                        // Calculate percentage based on current progress
                         pathLength: (unlockedIndex + 1) / milestones.length
                     }}
                     transition={springConfig}
@@ -62,7 +63,7 @@ export function Trajectory() {
                 {/* Milestone Nodes */}
                 {nodes.map((node, i) => {
                     const isUnlocked = i <= unlockedIndex;
-                    const isCurrent = i === currentMilestoneIndex;
+                    const isCurrent = i === currentIdx;
 
                     return (
                         <g key={milestones[i].id} className="cursor-pointer group">

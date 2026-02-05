@@ -1,98 +1,102 @@
-'use client';
+"use client";
 
-import { useStore } from '@/store/useStore';
-import { milestones } from '@/data/milestones';
-import { motion, AnimatePresence } from 'framer-motion';
-import { clsx, type ClassValue } from 'clsx';
-import { twMerge } from 'tailwind-merge';
-
-function cn(...inputs: ClassValue[]) {
-    return twMerge(clsx(inputs));
-}
+import React from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { useStore } from "@/store/useStore";
+import { milestones } from "@/data/milestones";
+import { GlassContainer } from "@/components/ui/GlassContainer";
+import { cn } from "@/lib/utils";
 
 export function Challenges() {
-    // Atomic Selectors for performance
-    const currentMilestoneIndex = useStore((state) => state.currentMilestoneIndex);
+    // Atomic Selectors for Performance (State Lead Requirement)
+    const currentStep = useStore((state) => state.currentStep);
     const isShaking = useStore((state) => state.isShaking);
-    const correctPulse = useStore((state) => state.correctPulse);
     const checkAnswer = useStore((state) => state.checkAnswer);
 
-    const milestone = milestones[currentMilestoneIndex];
+    // Retrieve the active mission data
+    const activeMilestone = milestones.find((m) => m.id === currentStep);
 
-    if (!milestone) return null;
+    // If mission is complete or data missing, render nothing
+    if (!activeMilestone) return null;
 
     return (
-        <div className="flex w-full max-w-md flex-col items-center justify-center p-6">
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-4">
             <AnimatePresence mode="wait">
                 <motion.div
-                    key={milestone.id}
-                    initial={{ opacity: 0, y: 20 }}
+                    key={activeMilestone.id}
+                    initial={{ opacity: 0, y: 20, scale: 0.95 }}
                     animate={{
                         opacity: 1,
                         y: 0,
-                        x: isShaking ? [0, -4, 4, -4, 4, 0] : 0
+                        scale: 1,
+                        // Physics-based Shake Effect on Failure
+                        x: isShaking ? [-10, 10, -10, 10, 0] : 0
                     }}
-                    exit={{ opacity: 0, y: -20 }}
+                    exit={{ opacity: 0, y: -20, scale: 0.95 }}
                     transition={{
-                        y: { type: 'spring', stiffness: 400, damping: 30 },
-                        x: { duration: 0.4, ease: 'easeInOut' }
+                        type: "spring",
+                        stiffness: 400,
+                        damping: 30,
+                        x: { duration: 0.4 } // Shake duration
                     }}
-                    className={cn(
-                        "relative w-full rounded-xl p-px",
-                        "bg-gradient-to-b from-white/10 to-transparent",
-                        "shadow-2xl backdrop-blur-xl",
-                        correctPulse && "animate-pulse-line"
-                    )}
+                    // CRITICAL: Re-enable clicks on the card itself
+                    className="pointer-events-auto w-full max-w-2xl"
                 >
-                    {/* Inner Content Area - Rauno 1px Law */}
-                    <div className="flex flex-col space-y-4 rounded-[11px] bg-black/80 p-6">
-                        <div className="flex items-center justify-between border-b border-white/5 pb-3">
-                            <div className="flex flex-col">
-                                <span className="font-mono text-[10px] tracking-widest text-zinc-500 uppercase">
-                                    Transmission #{milestone.number}
-                                </span>
-                                <span className="text-xs font-medium text-indigo-400 capitalize">
-                                    {milestone.subject}
+                    <GlassContainer className="p-0 overflow-hidden">
+                        {/* Header: Incoming Transmission */}
+                        <div className="bg-white/5 border-b border-white/10 p-4 flex justify-between items-center">
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                                <h2 className="text-xs font-mono tracking-widest text-emerald-500 uppercase">
+                                    Incoming Transmission // {activeMilestone.heading}
+                                </h2>
+                            </div>
+                            <span className="text-[10px] text-white/40 font-mono">
+                                SECURE CHANNEL
+                            </span>
+                        </div>
+
+                        {/* Payload: Challenge Question */}
+                        <div className="p-6 md:p-8 space-y-6">
+                            <div className="space-y-2">
+                                <h3 className="text-sm font-mono text-sky-400/80 uppercase tracking-wider">
+                                    {activeMilestone.subject}
+                                </h3>
+                                <p className="text-xl md:text-2xl font-light text-white leading-relaxed">
+                                    {activeMilestone.challenge}
+                                </p>
+                            </div>
+
+                            {/* Interaction Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                {activeMilestone.options.map((option) => (
+                                    <button
+                                        key={option}
+                                        onClick={() => checkAnswer(activeMilestone.id, option)}
+                                        className={cn(
+                                            "group relative px-4 py-4 text-left rounded-lg transition-all duration-200",
+                                            "border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20",
+                                            "active:scale-[0.98]",
+                                            // If logic requires highlighting specific states, add conditionals here
+                                        )}
+                                    >
+                                        <span className="text-sm md:text-base text-white/90 group-hover:text-white font-medium">
+                                            {option}
+                                        </span>
+                                        {/* Hover Glow Effect */}
+                                        <div className="absolute inset-0 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity bg-sky-500/5" />
+                                    </button>
+                                ))}
+                            </div>
+
+                            {/* Footer / CTA Status */}
+                            <div className="pt-2 border-t border-white/10 flex justify-end">
+                                <span className="text-[10px] font-mono text-white/30">
+                                    WAITING FOR COMMAND INPUT...
                                 </span>
                             </div>
-                            <div className="h-2 w-2 animate-pulse rounded-full bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.5)]" />
                         </div>
-
-                        <h2 className="text-lg font-semibold tracking-tight text-white">
-                            {milestone.question}
-                        </h2>
-
-                        <div className="grid grid-cols-2 gap-3">
-                            {milestone.options.map((option) => (
-                                <button
-                                    key={option}
-                                    onPointerDown={() => checkAnswer(milestone.id, option)}
-                                    className={cn(
-                                        "group relative flex items-center justify-center rounded-lg border border-white/5 bg-white/5 py-4 transition-all hover:bg-white/10 active:scale-95",
-                                        "before:absolute before:inset-0 before:rounded-lg before:opacity-0 before:transition-opacity hover:before:opacity-100",
-                                        "before:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1)]"
-                                    )}
-                                >
-                                    <span className="font-mono text-sm text-zinc-400 group-hover:text-white">
-                                        {option}
-                                    </span>
-                                </button>
-                            ))}
-                        </div>
-
-                        <button
-                            className={cn(
-                                "w-full rounded-lg border border-indigo-500/20 bg-indigo-500/10 py-3 font-mono text-xs font-bold tracking-widest text-indigo-400 uppercase transition-all hover:bg-indigo-500/20 active:scale-98",
-                                "shadow-[0_0_20px_rgba(99,102,241,0.1)]"
-                            )}
-                        >
-                            {milestone.cta}
-                        </button>
-                    </div>
-
-                    {/* Grain/Noise Overlay */}
-                    <div className="pointer-events-none absolute inset-0 rounded-xl opacity-[0.03]"
-                        style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
+                    </GlassContainer>
                 </motion.div>
             </AnimatePresence>
         </div>

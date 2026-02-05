@@ -2,8 +2,10 @@ export interface Milestone {
     id: string;
     number: string;
     title: string;
+    heading: string;
     subject: string;
     question: string;
+    challenge: string;
     options: string[];
     correctAnswer: string;
     cta: string;
@@ -13,11 +15,13 @@ export interface Milestone {
 
 export const milestones: Milestone[] = [
     {
-        id: '01-launch',
+        id: '1',
         number: '01',
         title: 'Launch',
+        heading: 'Launch',
         subject: 'Payload check',
         question: 'How many high-capacity deals were successfully injected into the 2025 orbital stream?',
+        challenge: 'How many high-capacity deals were successfully injected into the 2025 orbital stream?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'INITIALIZE STREAM',
@@ -25,11 +29,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '02-ascent',
+        id: '2',
         number: '02',
         title: 'Ascent',
+        heading: 'Ascent',
         subject: 'Velocity Check',
         question: 'At what frequency were daily transaction pings processed throughout the fiscal flight?',
+        challenge: 'At what frequency were daily transaction pings processed throughout the fiscal flight?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'STABILIZE ORBIT',
@@ -37,11 +43,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '03-burn',
+        id: '3',
         number: '03',
         title: 'Burn',
+        heading: 'Burn',
         subject: 'System Stress Test',
         question: 'Total analytical core hours dedicated to risk-mitigation and underwriting protocols?',
+        challenge: 'Total analytical core hours dedicated to risk-mitigation and underwriting protocols?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'ENGAGE ANALYTICS',
@@ -49,11 +57,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '04-vector',
+        id: '4',
         number: '04',
         title: 'Vector',
+        heading: 'Vector',
         subject: 'Expansion Map',
         question: 'How many diverse market sectors (Small & Large) are currently receiving Canada ICI telemetry?',
+        challenge: 'How many diverse market sectors (Small & Large) are currently receiving Canada ICI telemetry?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'MAPPING COMPLETE',
@@ -61,11 +71,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '05-mid-course',
+        id: '5',
         number: '05',
         title: 'Mid-Course',
+        heading: 'Mid-Course',
         subject: 'Life Support Expansion',
         question: 'By what percentage did the mission crew capacity increase during the 2025 cycle?',
+        challenge: 'By what percentage did the mission crew capacity increase during the 2025 cycle?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'SYNC CREW LOGS',
@@ -73,11 +85,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '06-junction',
+        id: '6',
         number: '06',
         title: 'Junction',
+        heading: 'Junction',
         subject: 'Operational Longevity',
         question: 'How many senior officers (5/10/20yr) have reached decade-level flight milestones?',
+        challenge: 'How many senior officers (5/10/20yr) have reached decade-level flight milestones?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'VERIFY TENURE',
@@ -85,11 +99,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '07-apex',
+        id: '7',
         number: '07',
         title: 'Apex',
+        heading: 'Apex',
         subject: 'Physical Readiness',
         question: 'Total kilometers logged by the crew during the 2025 Wellness Initiative?',
+        challenge: 'Total kilometers logged by the crew during the 2025 Wellness Initiative?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'VALIDATE VITALS',
@@ -97,11 +113,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '08-approach',
+        id: '8',
         number: '08',
         title: 'Approach',
+        heading: 'Approach',
         subject: 'Command Summit',
         question: 'How many strategic leads converged for the 2025 high-altitude retreat?',
+        challenge: 'How many strategic leads converged for the 2025 high-altitude retreat?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'LOCK APPROACH',
@@ -109,11 +127,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '09-far-side',
+        id: '9',
         number: '09',
         title: 'Signal Broadcast',
+        heading: 'Signal Broadcast',
         subject: 'Signal Broadcast',
         question: 'How many sector-wide industry events were hosted through the Canada ICI hub?',
+        challenge: 'How many sector-wide industry events were hosted through the Canada ICI hub?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'BROADCAST DATA',
@@ -121,11 +141,13 @@ export const milestones: Milestone[] = [
         isCompleted: false,
     },
     {
-        id: '10-splashdown',
+        id: '10',
         number: '10',
         title: 'Splashdown',
+        heading: 'Splashdown',
         subject: 'Impact Shielding',
         question: 'Total charitable organizations supported by the 2025 mission payload?',
+        challenge: 'Total charitable organizations supported by the 2025 mission payload?',
         options: ['1', '2', '3', '4'],
         correctAnswer: '1',
         cta: 'SEAL ARCHIVES',

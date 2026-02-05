@@ -12,7 +12,7 @@ interface OrbitState {
   setRole: (role: 'Mission Control' | 'Commander') => void;
 
   // Milestone Progress
-  currentMilestoneIndex: number;
+  currentStep: string; // Current milestone ID (e.g., '1', '2')
   unlockedIndex: number;
   completedMilestoneIds: string[];
 
@@ -36,7 +36,7 @@ export const useStore = create<OrbitState>()(
       role: null,
       setRole: (role) => set({ role }),
 
-      currentMilestoneIndex: 0,
+      currentStep: '1',
       unlockedIndex: 0, // 0-based index of the furthest unlocked milestone
       completedMilestoneIds: [],
 
@@ -55,12 +55,13 @@ export const useStore = create<OrbitState>()(
           setTimeout(() => set({ correctPulse: false }), 2000);
 
           // Update progress
-          const { unlockedIndex, currentMilestoneIndex, completedMilestoneIds } = get();
+          const { unlockedIndex, completedMilestoneIds } = get();
+          const currentIdx = milestones.findIndex(m => m.id === milestoneId);
 
           if (!completedMilestoneIds.includes(milestoneId)) {
             set({
               completedMilestoneIds: [...completedMilestoneIds, milestoneId],
-              unlockedIndex: Math.max(unlockedIndex, currentMilestoneIndex + 1),
+              unlockedIndex: Math.max(unlockedIndex, currentIdx + 1),
             });
           }
         } else {
@@ -73,25 +74,27 @@ export const useStore = create<OrbitState>()(
       },
 
       completeMilestone: (id) => {
-        const { completedMilestoneIds, unlockedIndex, currentMilestoneIndex } = get();
+        const { completedMilestoneIds, unlockedIndex } = get();
+        const currentIdx = milestones.findIndex(m => m.id === id);
         if (!completedMilestoneIds.includes(id)) {
           set({
             completedMilestoneIds: [...completedMilestoneIds, id],
-            unlockedIndex: Math.max(unlockedIndex, currentMilestoneIndex + 1),
+            unlockedIndex: Math.max(unlockedIndex, currentIdx + 1),
           });
         }
       },
 
       nextMilestone: () => {
-        const { currentMilestoneIndex, unlockedIndex } = get();
-        if (currentMilestoneIndex < milestones.length - 1 && currentMilestoneIndex < unlockedIndex) {
-          set({ currentMilestoneIndex: currentMilestoneIndex + 1 });
+        const { currentStep, unlockedIndex } = get();
+        const currentIdx = milestones.findIndex(m => m.id === currentStep);
+        if (currentIdx < milestones.length - 1 && currentIdx < unlockedIndex) {
+          set({ currentStep: milestones[currentIdx + 1].id });
         }
       },
 
       resetMission: () => set({
         role: null,
-        currentMilestoneIndex: 0,
+        currentStep: '1',
         unlockedIndex: 0,
         completedMilestoneIds: [],
         isShaking: false,

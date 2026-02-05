@@ -56,10 +56,8 @@ export default function OrbitDashboard() {
           </div>
 
           {/* Layer 2: HUD Interface (Challenges) */}
-          <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
-            <div className="pointer-events-auto">
-              <Challenges />
-            </div>
+          <div className="z-10">
+            <Challenges />
           </div>
 
           {/* Layer 3: Perimeter Data (Cosmetic HUD) */}
