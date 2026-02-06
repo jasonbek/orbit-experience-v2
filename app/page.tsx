@@ -10,6 +10,7 @@ import { OrientationShield } from '@/components/simulation/OrientationShield';
 import { Trajectory } from '@/components/simulation/Trajectory';
 import { Challenges } from '@/components/hud/Challenges';
 import { MissionReport } from '@/components/simulation/MissionReport';
+import { RoleSelect } from '@/components/simulation/RoleSelect';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -59,10 +60,20 @@ export default function OrbitDashboard() {
             <Trajectory />
           </div>
 
-          {/* Layer 2: HUD Interface (Challenges) / Mission Report */}
+          {/* Layer 2: Main Phase Flow (AnimatePresence) */}
           <div className="z-10">
             <AnimatePresence mode="wait">
-              {currentStep <= milestones.length ? (
+              {currentStep === 0 ? (
+                <motion.div
+                  key="role-select"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <RoleSelect />
+                </motion.div>
+              ) : currentStep >= 1 && currentStep <= milestones.length ? (
                 <motion.div
                   key="challenges"
                   initial={{ opacity: 0 }}

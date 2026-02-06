@@ -8,11 +8,11 @@ interface OrbitState {
   setHasHydrated: (state: boolean) => void;
 
   // Mission State
-  role: 'Mission Control' | 'Commander' | null;
-  setRole: (role: 'Mission Control' | 'Commander') => void;
+  role: 'mission-control' | 'commander' | null;
+  setUserRole: (role: 'mission-control' | 'commander') => void;
 
   // Milestone Progress
-  currentStep: number; // 1 to 11 (11 = complete)
+  currentStep: number; // 0 (Role Select) -> 1-10 (Challenges) -> 11 (Report)
   unlockedIndex: number;
   completedMilestoneIds: string[];
 
@@ -23,7 +23,7 @@ interface OrbitState {
   // Actions
   checkAnswer: (milestoneId: string, selectedOption: string) => void;
   completeMilestone: (id: string) => void;
-  nextMilestone: () => void;
+  nextStep: () => void;
   resetMission: () => void;
 }
 
@@ -34,10 +34,10 @@ export const useStore = create<OrbitState>()(
       setHasHydrated: (state) => set({ _hasHydrated: state }),
 
       role: null,
-      setRole: (role) => set({ role }),
+      setUserRole: (role) => set({ role }),
 
-      currentStep: 1,
-      unlockedIndex: 1, // 1-based index
+      currentStep: 0,
+      unlockedIndex: 1, // First milestone on trajectory is always available
       completedMilestoneIds: [],
 
       isShaking: false,
@@ -61,7 +61,7 @@ export const useStore = create<OrbitState>()(
           if (!completedMilestoneIds.includes(milestoneId)) {
             set({
               completedMilestoneIds: [...completedMilestoneIds, milestoneId],
-              unlockedIndex: Math.max(unlockedIndex, currentIdx + 2), // Unlock NEXT step
+              unlockedIndex: Math.max(unlockedIndex, currentIdx + 2),
             });
           }
         } else {
@@ -84,16 +84,17 @@ export const useStore = create<OrbitState>()(
         }
       },
 
-      nextMilestone: () => {
+      nextStep: () => {
         const { currentStep, unlockedIndex } = get();
-        if (currentStep <= milestones.length && currentStep < unlockedIndex) {
+        // Allow advancing if currentStep < unlockedIndex OR we are in Role Selection (0)
+        if (currentStep === 0 || (currentStep < milestones.length && currentStep < unlockedIndex)) {
           set({ currentStep: currentStep + 1 });
         }
       },
 
       resetMission: () => set({
         role: null,
-        currentStep: 1,
+        currentStep: 0,
         unlockedIndex: 1,
         completedMilestoneIds: [],
         isShaking: false,
