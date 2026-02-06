@@ -11,6 +11,7 @@ import { Viewport } from '@/components/simulation/Viewport';
 import { Challenges } from '@/components/hud/Challenges';
 import { MissionReport } from '@/components/simulation/MissionReport';
 import { RoleSelect } from '@/components/simulation/RoleSelect';
+import { NavigationRail } from '@/components/simulation/NavigationRail';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -19,6 +20,7 @@ function cn(...inputs: ClassValue[]) {
 export default function OrbitDashboard() {
   const _hasHydrated = useStore((state) => state._hasHydrated);
   const currentStep = useStore((state) => state.currentStep);
+  const isTransmissionOpen = useStore((state) => state.isTransmissionOpen);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -50,7 +52,10 @@ export default function OrbitDashboard() {
           {/* Layer 1: Simulation (Trajectory & Background Environment) */}
           <Viewport />
 
-          {/* Layer 2: Main Phase Flow (AnimatePresence) */}
+          {/* Layer 2: HUD Interface (Navigation Rail) */}
+          {currentStep > 0 && <NavigationRail />}
+
+          {/* Layer 3: Main Phase Flow (AnimatePresence) */}
           <div className="z-10">
             <AnimatePresence mode="wait">
               {currentStep === 0 ? (
@@ -65,13 +70,16 @@ export default function OrbitDashboard() {
                 </motion.div>
               ) : currentStep >= 1 && currentStep <= milestones.length ? (
                 <motion.div
-                  key="challenges"
+                  key="challenges-container"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
                 >
-                  <Challenges />
+                  <AnimatePresence>
+                    {isTransmissionOpen && (
+                      <Challenges />
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               ) : (
                 <motion.div
@@ -87,7 +95,7 @@ export default function OrbitDashboard() {
             </AnimatePresence>
           </div>
 
-          {/* Layer 3: Perimeter Data (Cosmetic HUD) */}
+          {/* Layer 4: Perimeter Data (Cosmetic HUD) */}
           <div className="absolute inset-0 z-20 pointer-events-none p-8 flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div className="flex flex-col gap-1">
@@ -115,7 +123,7 @@ export default function OrbitDashboard() {
             </div>
           </div>
 
-          {/* Layer 4: Grain/Noise (Rauno Texture) */}
+          {/* Layer 5: Grain/Noise (Rauno Texture) */}
           <div className="absolute inset-0 z-50 pointer-events-none opacity-[0.03]"
             style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
 

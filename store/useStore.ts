@@ -16,13 +16,18 @@ interface OrbitState {
   unlockedIndex: number;
   completedMilestoneIds: string[];
 
+  // Transmission HUD State (V2.2 Simulation Pivot)
+  isTransmissionOpen: boolean;
+  activeMilestoneId: string | null;
+
   // Feedback States
   isShaking: boolean;
   correctPulse: boolean;
 
   // Actions
   checkAnswer: (milestoneId: string, selectedOption: string) => boolean;
-  completeMilestone: (id: string) => void;
+  openTransmission: (milestoneId: string) => void;
+  closeTransmission: () => void;
   nextStep: () => void;
   resetMission: () => void;
 }
@@ -40,8 +45,21 @@ export const useStore = create<OrbitState>()(
       unlockedIndex: 1, // First milestone on trajectory is always available
       completedMilestoneIds: [],
 
+      isTransmissionOpen: false,
+      activeMilestoneId: null,
+
       isShaking: false,
       correctPulse: false,
+
+      openTransmission: (id) => {
+        // Only allow opening if it's the current target or already completed (explorable)
+        const { currentStep } = get();
+        if (id === currentStep.toString() || get().completedMilestoneIds.includes(id)) {
+          set({ isTransmissionOpen: true, activeMilestoneId: id });
+        }
+      },
+
+      closeTransmission: () => set({ isTransmissionOpen: false, activeMilestoneId: null }),
 
       checkAnswer: (milestoneId, selectedOption) => {
         const milestone = milestones.find((m) => m.id === milestoneId);
@@ -54,7 +72,9 @@ export const useStore = create<OrbitState>()(
           // Clear pulse after animation duration
           setTimeout(() => set({ correctPulse: false }), 2000);
 
-          // Update progress (Auto-Advance)
+          // Update progress (V2.2: Note that we don't auto-advance currentStep 
+          // until the HUD is closed or handled by the next node click)
+          // Actually, the brief says: "Correct answer; success.mp3 plays; HUD closes. Trajectory draws forward."
           const { unlockedIndex, completedMilestoneIds, currentStep } = get();
           const nextStepValue = currentStep + 1;
 
@@ -62,6 +82,8 @@ export const useStore = create<OrbitState>()(
             completedMilestoneIds: Array.from(new Set([...completedMilestoneIds, milestoneId])),
             unlockedIndex: Math.max(unlockedIndex, nextStepValue),
             currentStep: nextStepValue,
+            isTransmissionOpen: false, // Auto-close HUD on success
+            activeMilestoneId: null
           });
 
           return true;
@@ -75,20 +97,8 @@ export const useStore = create<OrbitState>()(
         }
       },
 
-      completeMilestone: (id) => {
-        const { completedMilestoneIds, unlockedIndex } = get();
-        const currentIdx = milestones.findIndex(m => m.id === id);
-        if (!completedMilestoneIds.includes(id)) {
-          set({
-            completedMilestoneIds: [...completedMilestoneIds, id],
-            unlockedIndex: Math.max(unlockedIndex, currentIdx + 2),
-          });
-        }
-      },
-
       nextStep: () => {
         const { currentStep, unlockedIndex } = get();
-        // Allow advancing if currentStep < unlockedIndex OR we are in Role Selection (0)
         if (currentStep === 0 || (currentStep < milestones.length && currentStep < unlockedIndex)) {
           set({ currentStep: currentStep + 1 });
         }
@@ -99,12 +109,14 @@ export const useStore = create<OrbitState>()(
         currentStep: 0,
         unlockedIndex: 1,
         completedMilestoneIds: [],
+        isTransmissionOpen: false,
+        activeMilestoneId: null,
         isShaking: false,
         correctPulse: false,
       }),
     }),
     {
-      name: 'orbit-mission-v2.1',
+      name: 'orbit-mission-v2.2', // Upgraded version name
       storage: createJSONStorage(() => localStorage),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
