@@ -129,8 +129,8 @@ export const milestones: Milestone[] = [
     {
         id: '9',
         number: '09',
-        title: 'Signal Broadcast',
-        heading: 'Signal Broadcast',
+        title: 'Far Side',
+        heading: 'Far Side',
         subject: 'Signal Broadcast',
         question: 'How many sector-wide industry events were hosted through the Canada ICI hub?',
         challenge: 'How many sector-wide industry events were hosted through the Canada ICI hub?',
