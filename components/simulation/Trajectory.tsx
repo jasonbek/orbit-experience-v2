@@ -47,8 +47,8 @@ export function Trajectory() {
                 {/* Earth Anchor */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 0.15, scale: 1 }}
-                    className="absolute bottom-12 left-12 w-48 h-48 md:w-96 md:h-96 grayscale blur-[2px] opacity-15"
+                    animate={{ opacity: 0.25, scale: 1 }}
+                    className="absolute bottom-12 left-12 w-48 h-48 md:w-96 md:h-96 grayscale blur-[1px] opacity-25"
                 >
                     <Image
                         src="/assets/earth.png"
@@ -61,8 +61,8 @@ export function Trajectory() {
                 {/* Moon Anchor */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
-                    animate={{ opacity: 0.1, scale: 1 }}
-                    className="absolute top-12 right-12 w-32 h-32 md:w-64 md:h-64 grayscale blur-[1px] opacity-10"
+                    animate={{ opacity: 0.2, scale: 1 }}
+                    className="absolute top-12 right-12 w-32 h-32 md:w-64 md:h-64 grayscale blur-[0.5px] opacity-20"
                 >
                     <Image
                         src="/assets/moon.png"

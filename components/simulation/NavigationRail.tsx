@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { useStore } from "@/store/useStore";
@@ -11,6 +11,14 @@ import { milestones } from "@/data/milestones";
 export function NavigationRail() {
     const currentStep = useStore((state) => state.currentStep);
     const role = useStore((state) => state.role);
+    const [mounted, setMounted] = useState(false);
+
+    // Hydration guard to prevent SSR mismatches
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
 
     // Determine Brand Colors based on Role
     const isCommander = role === "commander";
@@ -18,8 +26,9 @@ export function NavigationRail() {
     const shadowColor = isCommander ? "shadow-[0_0_15px_#D80010]" : "shadow-[0_0_15px_#009DD6]";
     const variant = isCommander ? "red" : "blue";
 
-    // Calculate progress percentage (0 to 100) based on milestones
-    const progress = Math.min((currentStep / milestones.length) * 100, 100);
+    // V2.2 Progress Fill Logic: (currentStep - 1) / (total - 1)
+    // currentStep 1 is start (0%), currentStep 10 is end (100%)
+    const progress = Math.min(Math.max(((currentStep - 1) / (milestones.length - 1)) * 100, 0), 100);
 
     return (
         <div className="absolute bottom-4 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
@@ -31,7 +40,7 @@ export function NavigationRail() {
             >
                 <GlassContainer variant={variant} className="h-16 md:h-20 flex items-center justify-between px-6 md:px-10">
 
-                    {/* EARTH (Start) - Replaces Generic Icon with PNG */}
+                    {/* EARTH (Start) */}
                     <div className="relative group">
                         <div className={cn("absolute inset-0 opacity-20 blur-md rounded-full", activeColor)} />
                         <div className="relative w-8 h-8 md:w-10 md:h-10 opacity-80 grayscale group-hover:grayscale-0 transition-all duration-500">
@@ -54,8 +63,10 @@ export function NavigationRail() {
                         {/* Background Nodes (The Milestones) */}
                         <div className="absolute inset-0 flex justify-between items-center z-0 px-[1%]">
                             {milestones.map((m, i) => {
-                                const isCompleted = i < currentStep;
-                                const isNext = i === currentStep;
+                                // milestones are 1-indexed in ids, i is 0-indexed
+                                const milestoneNumber = i + 1;
+                                const isCompleted = milestoneNumber < currentStep;
+                                const isNext = milestoneNumber === currentStep;
 
                                 return (
                                     <div key={m.id} className="relative flex items-center justify-center">
@@ -95,10 +106,10 @@ export function NavigationRail() {
                         />
                     </div>
 
-                    {/* MOON (Finish) - Replaces Generic Icon with PNG */}
+                    {/* MOON (Finish) */}
                     <div className="relative group">
                         <div className={cn(
-                            "absolute inset-0 opacity-0 blur-md rounded-full transition-opacity duration-1000",
+                            "absolute inset-0 blur-md rounded-full transition-opacity duration-1000",
                             progress === 100 ? "opacity-50" : "opacity-0",
                             activeColor
                         )} />
