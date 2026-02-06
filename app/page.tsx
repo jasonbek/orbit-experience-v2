@@ -7,7 +7,7 @@ import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { motion, AnimatePresence } from 'framer-motion';
 import { OrientationShield } from '@/components/simulation/OrientationShield';
-import { Trajectory } from '@/components/simulation/Trajectory';
+import { Viewport } from '@/components/simulation/Viewport';
 import { Challenges } from '@/components/hud/Challenges';
 import { MissionReport } from '@/components/simulation/MissionReport';
 import { RoleSelect } from '@/components/simulation/RoleSelect';
@@ -47,18 +47,8 @@ export default function OrbitDashboard() {
           "before:absolute before:inset-0 before:z-50 before:pointer-events-none before:bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.4)_100%)]"
         )}>
 
-          {/* Layer 1: Simulation (Trajectory & Space) */}
-          <div className="absolute inset-0 z-0 bg-[#020202]">
-            {/* Subtle Starfield Overlay */}
-            <div
-              className="absolute inset-0 opacity-20 mix-blend-screen pointer-events-none"
-              style={{
-                backgroundImage: 'radial-gradient(1px 1px at 20px 30px, white, rgba(0,0,0,0)), radial-gradient(1px 1px at 40px 70px, white, rgba(0,0,0,0)), radial-gradient(1px 1px at 50px 160px, white, rgba(0,0,0,0))',
-                backgroundSize: '200px 200px'
-              }}
-            />
-            <Trajectory />
-          </div>
+          {/* Layer 1: Simulation (Trajectory & Background Environment) */}
+          <Viewport />
 
           {/* Layer 2: Main Phase Flow (AnimatePresence) */}
           <div className="z-10">
