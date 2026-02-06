@@ -48,25 +48,25 @@ export const useStore = create<OrbitState>()(
         if (!milestone) return false;
 
         if (selectedOption === milestone.correctAnswer) {
-          // Success Path
-          set({ correctPulse: true });
+          // SUCCESS: Play Sound & Advance
+          set({ correctPulse: true, isShaking: false });
 
           // Clear pulse after animation duration
           setTimeout(() => set({ correctPulse: false }), 2000);
 
-          // Update progress
-          const { unlockedIndex, completedMilestoneIds } = get();
-          const currentIdx = milestones.findIndex(m => m.id === milestoneId);
+          // Update progress (Auto-Advance)
+          const { unlockedIndex, completedMilestoneIds, currentStep } = get();
+          const nextStepValue = currentStep + 1;
 
-          if (!completedMilestoneIds.includes(milestoneId)) {
-            set({
-              completedMilestoneIds: [...completedMilestoneIds, milestoneId],
-              unlockedIndex: Math.max(unlockedIndex, currentIdx + 2),
-            });
-          }
+          set({
+            completedMilestoneIds: Array.from(new Set([...completedMilestoneIds, milestoneId])),
+            unlockedIndex: Math.max(unlockedIndex, nextStepValue),
+            currentStep: nextStepValue,
+          });
+
           return true;
         } else {
-          // Failure Path
+          // FAILURE: Trigger Shake
           set({ isShaking: true });
 
           // Trigger physics-based feedback for 500ms
