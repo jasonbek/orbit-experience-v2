@@ -14,7 +14,7 @@ export function RoleSelect() {
 
     const handleSelect = (role: "mission-control" | "commander") => {
         setUserRole(role);
-        nextStep(); // Moves currentStep from 0 -> 1 (Launch)
+        nextStep();
     };
 
     const cards = [
@@ -24,8 +24,7 @@ export function RoleSelect() {
             desc: "Oversee the 2025 orbit from the Operations Center.",
             image: "/assets/mission-control-avatar.png",
             color: "from-amg-blue/30 to-amg-blue/0",
-            border: "group-hover:shadow-[0_0_20px_rgba(0,157,214,0.3)]",
-            accent: "amg-blue",
+            variant: "blue", // v2.2 Trigger
         },
         {
             id: "commander",
@@ -33,15 +32,13 @@ export function RoleSelect() {
             desc: "Pilot the vessel through the milestone trajectory.",
             image: "/assets/commander-avatar.png",
             color: "from-ici-red/30 to-ici-red/0",
-            border: "group-hover:shadow-[0_0_20px_rgba(216,0,16,0.3)]",
-            accent: "ici-red",
+            variant: "red", // v2.2 Trigger
         },
     ];
 
     return (
         <div className="absolute inset-0 z-50 flex items-center justify-center p-2 md:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md">
             <div className="w-full max-w-5xl space-y-4 md:space-y-8">
-
                 {/* Branding: Canada ICI Logo */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.9 }}
@@ -81,44 +78,22 @@ export function RoleSelect() {
                             animate={{ opacity: 1, x: 0 }}
                             transition={{ delay: 0.2 + (i * 0.1), type: "spring", stiffness: 300, damping: 30 }}
                             onClick={() => handleSelect(card.id as any)}
-                            className={cn(
-                                "group relative text-left h-[220px] md:h-[400px] w-full transition-all duration-500",
-                                "hover:scale-[1.01] active:scale-[0.98]"
-                            )}
+                            className="group relative text-left h-[220px] md:h-[400px] w-full transition-all duration-500 hover:scale-[1.01] active:scale-[0.98]"
                         >
-                            <GlassContainer className={cn(
-                                "h-full relative overflow-hidden transition-all duration-500",
-                                // Lighting Law: Box shadow highlights
-                                card.border
-                            )}>
+                            {/* Force overwrite: Pass variant to GlassContainer */}
+                            <GlassContainer variant={card.variant as any} className="h-full relative overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
                                 {/* Brand Background Gradient */}
-                                <div className={cn(
-                                    "absolute inset-0 bg-gradient-to-b opacity-10 md:opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-                                    card.color
-                                )} />
+                                <div className={cn("absolute inset-0 bg-gradient-to-b opacity-10 md:opacity-0 group-hover:opacity-100 transition-opacity duration-500", card.color)} />
 
-                                {/* Character Headshot (Absolute Positioned) */}
-                                <div className={cn(
-                                    "absolute bottom-0 right-0 w-3/4 h-3/4 transition-all duration-700 origin-bottom-right",
-                                    "opacity-20 md:opacity-60 group-hover:opacity-100 group-hover:scale-105",
-                                    "grayscale-0 md:grayscale group-hover:grayscale-0"
-                                )}>
-                                    <Image
-                                        src={card.image}
-                                        alt={card.title}
-                                        fill
-                                        className="object-contain object-bottom-right"
-                                        sizes="(max-width: 768px) 100vw, 50vw"
-                                    />
+                                {/* Character Headshot */}
+                                <div className="absolute bottom-0 right-0 w-3/4 h-3/4 transition-all duration-700 origin-bottom-right opacity-20 md:opacity-60 group-hover:opacity-100 group-hover:scale-105 grayscale md:grayscale group-hover:grayscale-0">
+                                    <Image src={card.image} alt={card.title} fill className="object-contain object-bottom-right" />
                                 </div>
 
-                                {/* Text Content (Layered on top) */}
+                                {/* Text Content */}
                                 <div className="relative z-10 p-4 md:p-8 flex flex-col justify-between h-full">
                                     <div className="space-y-1 md:space-y-3">
-                                        <div className={cn(
-                                            "h-1 w-8 rounded-full mb-2 md:mb-4 transition-all duration-500",
-                                            card.accent === "amg-blue" ? "bg-amg-blue shadow-[0_0_10px_#009DD6]" : "bg-ici-red shadow-[0_0_10px_#D80010]"
-                                        )} />
+                                        <div className={cn("h-1 w-8 rounded-full mb-2 transition-all duration-500", card.variant === "blue" ? "bg-[#009DD6]" : "bg-[#D80010]")} />
                                         <h2 className="text-xl md:text-3xl font-bold text-white tracking-widest drop-shadow-lg">{card.title}</h2>
                                         <p className="hidden md:block text-white/60 text-sm leading-relaxed max-w-[200px] drop-shadow-md font-light">
                                             {card.desc}
@@ -134,7 +109,7 @@ export function RoleSelect() {
                                 {/* Bottom Scanline Effect */}
                                 <div className={cn(
                                     "absolute bottom-0 left-0 right-0 h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500",
-                                    card.accent === "amg-blue" ? "bg-amg-blue shadow-[0_0_15px_#009DD6]" : "bg-ici-red shadow-[0_0_15px_#D80010]"
+                                    card.variant === "blue" ? "bg-[#009DD6] shadow-[0_0_15px_#009DD6]" : "bg-[#D80010] shadow-[0_0_15px_#D80010]"
                                 )} />
                             </GlassContainer>
                         </motion.button>
