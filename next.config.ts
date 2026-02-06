@@ -1,14 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Localization Optimization: All assets are now served from /public
   images: {
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**.canada-ici.com',
-      },
-      // Add more patterns as needed
-    ],
+    // remotePatterns removed as per Phase 6 & 7 localized asset directive
   },
 };
 
