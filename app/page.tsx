@@ -2,8 +2,10 @@
 
 import { useStore } from '@/store/useStore';
 import { useEffect, useState } from 'react';
+import { milestones } from '@/data/milestones';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
+import { motion, AnimatePresence } from 'framer-motion';
 import { OrientationShield } from '@/components/simulation/OrientationShield';
 import { Trajectory } from '@/components/simulation/Trajectory';
 import { Challenges } from '@/components/hud/Challenges';
@@ -15,10 +17,8 @@ function cn(...inputs: ClassValue[]) {
 
 export default function OrbitDashboard() {
   const _hasHydrated = useStore((state) => state._hasHydrated);
-  const completedMilestoneIds = useStore((state) => state.completedMilestoneIds);
+  const currentStep = useStore((state) => state.currentStep);
   const [isMounted, setIsMounted] = useState(false);
-
-  const isMissionComplete = completedMilestoneIds.length === 10;
 
   useEffect(() => {
     setIsMounted(true);
@@ -61,11 +61,29 @@ export default function OrbitDashboard() {
 
           {/* Layer 2: HUD Interface (Challenges) / Mission Report */}
           <div className="z-10">
-            {isMissionComplete ? (
-              <MissionReport />
-            ) : (
-              <Challenges />
-            )}
+            <AnimatePresence mode="wait">
+              {currentStep <= milestones.length ? (
+                <motion.div
+                  key="challenges"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <Challenges />
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="report"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <MissionReport />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
 
           {/* Layer 3: Perimeter Data (Cosmetic HUD) */}

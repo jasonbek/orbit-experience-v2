@@ -12,7 +12,7 @@ interface OrbitState {
   setRole: (role: 'Mission Control' | 'Commander') => void;
 
   // Milestone Progress
-  currentStep: string; // Current milestone ID (e.g., '1', '2')
+  currentStep: number; // 1 to 11 (11 = complete)
   unlockedIndex: number;
   completedMilestoneIds: string[];
 
@@ -36,8 +36,8 @@ export const useStore = create<OrbitState>()(
       role: null,
       setRole: (role) => set({ role }),
 
-      currentStep: '1',
-      unlockedIndex: 0, // 0-based index of the furthest unlocked milestone
+      currentStep: 1,
+      unlockedIndex: 1, // 1-based index
       completedMilestoneIds: [],
 
       isShaking: false,
@@ -61,7 +61,7 @@ export const useStore = create<OrbitState>()(
           if (!completedMilestoneIds.includes(milestoneId)) {
             set({
               completedMilestoneIds: [...completedMilestoneIds, milestoneId],
-              unlockedIndex: Math.max(unlockedIndex, currentIdx + 1),
+              unlockedIndex: Math.max(unlockedIndex, currentIdx + 2), // Unlock NEXT step
             });
           }
         } else {
@@ -79,22 +79,21 @@ export const useStore = create<OrbitState>()(
         if (!completedMilestoneIds.includes(id)) {
           set({
             completedMilestoneIds: [...completedMilestoneIds, id],
-            unlockedIndex: Math.max(unlockedIndex, currentIdx + 1),
+            unlockedIndex: Math.max(unlockedIndex, currentIdx + 2),
           });
         }
       },
 
       nextMilestone: () => {
         const { currentStep, unlockedIndex } = get();
-        const currentIdx = milestones.findIndex(m => m.id === currentStep);
-        if (currentIdx < milestones.length - 1 && currentIdx < unlockedIndex) {
-          set({ currentStep: milestones[currentIdx + 1].id });
+        if (currentStep <= milestones.length && currentStep < unlockedIndex) {
+          set({ currentStep: currentStep + 1 });
         }
       },
 
       resetMission: () => set({
         role: null,
-        currentStep: '1',
+        currentStep: 1,
         unlockedIndex: 1,
         completedMilestoneIds: [],
         isShaking: false,

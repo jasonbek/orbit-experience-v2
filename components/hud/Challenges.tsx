@@ -14,7 +14,7 @@ export function Challenges() {
     const checkAnswer = useStore((state) => state.checkAnswer);
 
     // Retrieve the active mission data
-    const activeMilestone = milestones.find((m) => m.id === currentStep);
+    const activeMilestone = milestones.find((m) => m.id === currentStep.toString());
 
     // If mission is complete or data missing, render nothing
     if (!activeMilestone) return null;

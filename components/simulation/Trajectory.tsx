@@ -10,7 +10,7 @@ export function Trajectory() {
     const currentStep = useStore((state) => state.currentStep);
     const unlockedIndex = useStore((state) => state.unlockedIndex);
 
-    const currentIdx = milestones.findIndex(m => m.id === currentStep);
+    const currentIdx = milestones.findIndex(m => m.id === currentStep.toString());
 
     // SVG ViewBox dimensions (matches the 16:9 aspect ratio coordinate system)
     const width = 1920;
@@ -54,7 +54,7 @@ export function Trajectory() {
                     initial={{ pathLength: 0 }}
                     animate={{
                         // Calculate percentage based on current progress
-                        pathLength: (unlockedIndex + 1) / milestones.length
+                        pathLength: (unlockedIndex - 1) / (milestones.length - 1)
                     }}
                     transition={springConfig}
                     strokeLinecap="round"
@@ -62,7 +62,7 @@ export function Trajectory() {
 
                 {/* Milestone Nodes */}
                 {nodes.map((node, i) => {
-                    const isUnlocked = i <= unlockedIndex;
+                    const isUnlocked = (i + 1) <= unlockedIndex;
                     const isCurrent = i === currentIdx;
 
                     return (
