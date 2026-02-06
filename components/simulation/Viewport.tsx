@@ -12,7 +12,7 @@ import { NavigationRail } from "@/components/simulation/NavigationRail";
 import { OrientationShield } from "@/components/simulation/OrientationShield"; //
 
 export function Viewport() {
-    const role = useStore((state) => state.userRole);
+    const role = useStore((state) => state.role);
     const currentStep = useStore((state) => state.currentStep);
 
     // Background map based on role

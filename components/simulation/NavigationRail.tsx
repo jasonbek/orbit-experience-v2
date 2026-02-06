@@ -10,7 +10,7 @@ import { milestones } from "@/data/milestones";
 
 export function NavigationRail() {
     const currentStep = useStore((state) => state.currentStep);
-    const role = useStore((state) => state.userRole);
+    const role = useStore((state) => state.role);
 
     // Determine Brand Colors based on Role
     const isCommander = role === "commander";
