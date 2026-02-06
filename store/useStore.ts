@@ -21,7 +21,7 @@ interface OrbitState {
   correctPulse: boolean;
 
   // Actions
-  checkAnswer: (milestoneId: string, selectedOption: string) => void;
+  checkAnswer: (milestoneId: string, selectedOption: string) => boolean;
   completeMilestone: (id: string) => void;
   nextStep: () => void;
   resetMission: () => void;
@@ -45,7 +45,7 @@ export const useStore = create<OrbitState>()(
 
       checkAnswer: (milestoneId, selectedOption) => {
         const milestone = milestones.find((m) => m.id === milestoneId);
-        if (!milestone) return;
+        if (!milestone) return false;
 
         if (selectedOption === milestone.correctAnswer) {
           // Success Path
@@ -64,12 +64,14 @@ export const useStore = create<OrbitState>()(
               unlockedIndex: Math.max(unlockedIndex, currentIdx + 2),
             });
           }
+          return true;
         } else {
           // Failure Path
           set({ isShaking: true });
 
           // Trigger physics-based feedback for 500ms
           setTimeout(() => set({ isShaking: false }), 500);
+          return false;
         }
       },
 

@@ -5,10 +5,12 @@ import { milestones } from "@/data/milestones";
 import { useStore } from "@/store/useStore";
 import { getTrajectoryNodes } from "@/lib/bezier";
 import { cn } from "@/lib/utils";
+import { useSoundSystem } from "@/hooks/useSoundSystem";
 
 export function Trajectory() {
     const currentStep = useStore((state) => state.currentStep);
     const unlockedIndex = useStore((state) => state.unlockedIndex);
+    const { playNotification } = useSoundSystem();
 
     const currentIdx = milestones.findIndex(m => m.id === currentStep.toString());
 
@@ -66,7 +68,11 @@ export function Trajectory() {
                     const isCurrent = i === currentIdx;
 
                     return (
-                        <g key={milestones[i].id} className="cursor-pointer group">
+                        <g
+                            key={milestones[i].id}
+                            className="cursor-pointer group"
+                            onClick={() => playNotification()}
+                        >
                             {/* Outer Glow for Unlocked Nodes */}
                             {isUnlocked && (
                                 <circle

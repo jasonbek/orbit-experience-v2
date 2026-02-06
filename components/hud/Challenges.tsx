@@ -6,18 +6,30 @@ import { useStore } from "@/store/useStore";
 import { milestones } from "@/data/milestones";
 import { GlassContainer } from "@/components/ui/GlassContainer";
 import { cn } from "@/lib/utils";
+import { useSoundSystem } from "@/hooks/useSoundSystem";
 
 export function Challenges() {
     // Atomic Selectors for Performance (State Lead Requirement)
     const currentStep = useStore((state) => state.currentStep);
     const isShaking = useStore((state) => state.isShaking);
     const checkAnswer = useStore((state) => state.checkAnswer);
+    const { playClick, playSuccess, playError } = useSoundSystem();
 
     // Retrieve the active mission data
     const activeMilestone = milestones.find((m) => m.id === currentStep.toString());
 
     // If mission is complete or data missing, render nothing
     if (!activeMilestone) return null;
+
+    const handleOptionClick = (option: string) => {
+        playClick();
+        const isCorrect = checkAnswer(activeMilestone.id, option);
+        if (isCorrect) {
+            playSuccess();
+        } else {
+            playError();
+        }
+    };
 
     return (
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none p-4">
@@ -72,7 +84,7 @@ export function Challenges() {
                                 {activeMilestone.options.map((option) => (
                                     <button
                                         key={option}
-                                        onClick={() => checkAnswer(activeMilestone.id, option)}
+                                        onClick={() => handleOptionClick(option)}
                                         className={cn(
                                             "group relative px-4 py-4 text-left rounded-lg transition-all duration-200",
                                             "border border-white/10 bg-white/5 hover:bg-white/10 hover:border-white/20",
