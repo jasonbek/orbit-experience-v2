@@ -1,12 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { milestones } from "@/data/milestones";
 import { useStore } from "@/store/useStore";
 import { getTrajectoryNodes } from "@/lib/bezier";
 import { cn } from "@/lib/utils";
 import { useSoundSystem } from "@/hooks/useSoundSystem";
-import { Globe, Moon } from "lucide-react";
 
 export function Trajectory() {
     const currentStep = useStore((state) => state.currentStep);
@@ -14,8 +14,6 @@ export function Trajectory() {
     const role = useStore((state) => state.role);
     const openTransmission = useStore((state) => state.openTransmission);
     const { playNotification } = useSoundSystem();
-
-    const currentIdx = milestones.findIndex(m => m.id === currentStep.toString());
 
     // Brand color logic
     const brandColor = role === "mission-control" ? "#009DD6" : "#D80010";
@@ -44,11 +42,35 @@ export function Trajectory() {
 
     return (
         <div className="absolute inset-0 z-0 pointer-events-auto">
-            {/* Simulation Celestial Layer */}
-            <div className="absolute inset-0 pointer-events-none flex items-center justify-between p-24 opacity-20 grayscale">
-                {/* These are just visual anchors behind the SVG path */}
-                <Globe className="w-16 h-16 self-end text-white/50" />
-                <Moon className="w-16 h-16 self-start text-white/50 ml-auto" />
+            {/* Simulation Celestial Layer (V2.2: Using High-Fidelity PNG Assets) */}
+            <div className="absolute inset-0 pointer-events-none p-12 md:p-24 overflow-hidden">
+                {/* Earth Anchor */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 0.15, scale: 1 }}
+                    className="absolute bottom-12 left-12 w-48 h-48 md:w-96 md:h-96 grayscale blur-[2px] opacity-15"
+                >
+                    <Image
+                        src="/assets/earth.png"
+                        alt="Earth"
+                        fill
+                        className="object-contain"
+                    />
+                </motion.div>
+
+                {/* Moon Anchor */}
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 0.1, scale: 1 }}
+                    className="absolute top-12 right-12 w-32 h-32 md:w-64 md:h-64 grayscale blur-[1px] opacity-10"
+                >
+                    <Image
+                        src="/assets/moon.png"
+                        alt="Moon"
+                        fill
+                        className="object-contain"
+                    />
+                </motion.div>
             </div>
 
             <svg
@@ -96,7 +118,7 @@ export function Trajectory() {
                             )}
                             onClick={() => handleNodeClick(milestoneId)}
                         >
-                            {/* Pulse Effect for the Active Node (Simulation Pivot V2.2) */}
+                            {/* Pulse Effect for the Active Node */}
                             {isCurrent && (
                                 <motion.circle
                                     cx={node.x}
@@ -142,7 +164,7 @@ export function Trajectory() {
                             {/* Node Label */}
                             <text
                                 x={node.x}
-                                y={node.y + (i % 2 === 0 ? 35 : -25)} // Alternate placement for spacing
+                                y={node.y + (i % 2 === 0 ? 35 : -25)}
                                 textAnchor="middle"
                                 className={cn(
                                     "font-mono text-[9px] md:text-[11px] uppercase tracking-widest transition-all duration-300 pointer-events-none",
