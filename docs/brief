@@ -21,9 +21,3 @@
     * **Success**: The interaction button pulses green; the next milestone on the trajectory unlocks.
     * **Failure**: The transmission card shakes; the correct answer choice is highlighted with a pulse-line border.
 * **UI Aesthetic**: Use the **Rauno 1px Lighting Law**—1px inner borders (`box-shadow`), `backdrop-filter: blur(12px)`, and subtle noise textures to prevent color banding.
-
----
-
-## Agent Implementation Protocol
-1.  **Context Injection**: Start your next session by providing this file and saying: *"Here is the Mission Manifest for Orbit Experience v2.1. Use this as your primary context for all code generation."*
-2.  **Stage 1 Initiation**: Follow up with: *"Based on this brief, begin Stage 1: Populate `data/milestones.ts` with the 10 Canada ICI stats and initialize the Zustand store in `store/useStore.ts` with the hydration guard."*
