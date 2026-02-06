@@ -9,10 +9,10 @@ import { RoleSelect } from "@/components/simulation/RoleSelect";
 import { MissionReport } from "@/components/simulation/MissionReport";
 import { Challenges } from "@/components/hud/Challenges";
 import { NavigationRail } from "@/components/simulation/NavigationRail";
-import { OrientationShield } from "@/components/simulation/OrientationShield";
+import { OrientationShield } from "@/components/simulation/OrientationShield"; //
 
 export function Viewport() {
-    const role = useStore((state) => state.role); // Updated to match store selector
+    const role = useStore((state) => state.userRole);
     const currentStep = useStore((state) => state.currentStep);
 
     // Background map based on role
@@ -61,6 +61,7 @@ export function Viewport() {
             </div>
 
             {/* 2. Trajectory Simulation (World Space) */}
+            {/* This draws the 3D path in the background */}
             <Trajectory />
 
             {/* 3. Interface Layer (HUD Space) */}
