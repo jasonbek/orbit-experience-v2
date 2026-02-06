@@ -1,90 +1,112 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { useStore } from "@/store/useStore";
-import { milestones } from "@/data/milestones";
 import { GlassContainer } from "@/components/ui/GlassContainer";
-import { Globe, Moon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { milestones } from "@/data/milestones";
 
 export function NavigationRail() {
     const currentStep = useStore((state) => state.currentStep);
     const role = useStore((state) => state.role);
-    const unlockedIndex = useStore((state) => state.unlockedIndex);
 
-    // Brand color logic (AMG Blue for Mission Control, ICI Red for Commander)
-    const brandColorClass = role === "mission-control" ? "bg-amg-blue" : "bg-ici-red";
-    const brandShadowClass = role === "mission-control" ? "shadow-amg-blue/50" : "shadow-ici-red/50";
-    const brandTextClass = role === "mission-control" ? "text-amg-blue" : "text-ici-red";
+    // Determine Brand Colors based on Role
+    const isCommander = role === "commander";
+    const activeColor = isCommander ? "bg-[#D80010]" : "bg-[#009DD6]";
+    const shadowColor = isCommander ? "shadow-[0_0_15px_#D80010]" : "shadow-[0_0_15px_#009DD6]";
+    const variant = isCommander ? "red" : "blue";
 
-    // Calculate mission progress percentage (0 to 1)
-    // currentStep 0 to 11
-    const progress = Math.min(Math.max((unlockedIndex - 1) / milestones.length, 0), 1);
+    // Calculate progress percentage (0 to 100) based on milestones
+    const progress = Math.min((currentStep / milestones.length) * 100, 100);
 
     return (
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 w-full max-w-3xl px-4 pointer-events-auto">
-            <GlassContainer className="px-6 py-3 flex items-center gap-6 overflow-visible">
+        <div className="absolute bottom-4 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="w-full max-w-3xl"
+            >
+                <GlassContainer variant={variant} className="h-16 md:h-20 flex items-center justify-between px-6 md:px-10">
 
-                {/* Celestial Anchor: Earth (t=0) */}
-                <div className="relative group">
-                    <Globe className={cn(
-                        "w-5 h-5 transition-colors duration-500",
-                        unlockedIndex > 0 ? brandTextClass : "text-ici-grey"
-                    )} />
-                    <div className={cn(
-                        "absolute inset-0 blur-md opacity-0 group-hover:opacity-40 transition-opacity rounded-full",
-                        brandColorClass
-                    )} />
-                </div>
-
-                {/* The Navigation Trace */}
-                <div className="relative flex-1 h-1 bg-white/5 rounded-full overflow-hidden">
-                    {/* Background Trace (Grey) */}
-                    <div className="absolute inset-0 bg-ici-grey/20" />
-
-                    {/* Active Trace (Brand Color) */}
-                    <motion.div
-                        className={cn("absolute inset-y-0 left-0", brandColorClass, brandShadowClass, "shadow-[0_0_10px_rgba(0,0,0,0.5)]")}
-                        initial={{ width: 0 }}
-                        animate={{ width: `${progress * 100}%` }}
-                        transition={{ type: "spring", stiffness: 100, damping: 20 }}
-                    />
-
-                    {/* Milestone Ticks */}
-                    <div className="absolute inset-0 flex justify-between px-1">
-                        {milestones.map((_, i) => (
-                            <div
-                                key={i}
-                                className={cn(
-                                    "w-1 h-full rounded-full transition-colors duration-500",
-                                    (i + 1) < unlockedIndex ? "bg-white/20" : "bg-white/5"
-                                )}
-                            />
-                        ))}
+                    {/* EARTH (Start) */}
+                    <div className="relative group">
+                        <div className={cn("absolute inset-0 opacity-20 blur-md rounded-full", activeColor)} />
+                        <div className="relative w-8 h-8 md:w-10 md:h-10 opacity-80 grayscale group-hover:grayscale-0 transition-all duration-500">
+                            {/* Note: Ensure this path matches your public folder, or use /assets/earth.png */}
+                            <Image src="/assets/earth.png" alt="Earth" fill className="object-contain" />
+                        </div>
+                        <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px] font-mono text-white/40 tracking-widest uppercase">
+                            GEO
+                        </span>
                     </div>
-                </div>
 
-                {/* Celestial Anchor: Moon (t=1.0) */}
-                <div className="relative group">
-                    <Moon className={cn(
-                        "w-5 h-5 transition-colors duration-500",
-                        unlockedIndex > milestones.length ? brandTextClass : "text-ici-grey"
-                    )} />
-                    <div className={cn(
-                        "absolute inset-0 blur-md opacity-0 group-hover:opacity-40 transition-opacity rounded-full",
-                        brandColorClass
-                    )} />
-                </div>
+                    {/* THE TRACK (Timeline) */}
+                    <div className="flex-1 mx-6 md:mx-10 relative h-[2px] bg-white/10 rounded-full overflow-visible">
 
-                {/* Mission Status Tag */}
-                <div className="hidden md:flex flex-col items-end border-l border-white/10 pl-6 min-w-[120px]">
-                    <span className="text-[9px] font-mono text-ici-light-grey uppercase tracking-widest">Trajectory</span>
-                    <span className="text-[10px] font-mono text-white/80 font-bold uppercase">
-                        {progress < 1 ? `T+ ${Math.round(progress * 100)}%` : "Orbital Match"}
-                    </span>
-                </div>
-            </GlassContainer>
+                        {/* Background Nodes (The Milestones) */}
+                        <div className="absolute inset-0 flex justify-between items-center z-0 px-[1%]">
+                            {milestones.map((m, i) => {
+                                const isCompleted = i < currentStep;
+                                const isNext = i === currentStep;
+
+                                return (
+                                    <div key={m.id} className="relative flex items-center justify-center">
+                                        {/* The Dot */}
+                                        <motion.div
+                                            className={cn(
+                                                "w-2 h-2 rounded-full transition-all duration-500",
+                                                isCompleted ? activeColor : "bg-white/10",
+                                                isNext && "scale-150 animate-pulse bg-white"
+                                            )}
+                                        />
+
+                                        {/* The Label (Desktop Only) */}
+                                        {isNext && (
+                                            <motion.div
+                                                initial={{ opacity: 0, y: -10 }}
+                                                animate={{ opacity: 1, y: -20 }}
+                                                className={cn(
+                                                    "absolute top-0 whitespace-nowrap text-[8px] font-mono tracking-widest uppercase hidden md:block",
+                                                    isCommander ? "text-[#D80010]" : "text-[#009DD6]"
+                                                )}
+                                            >
+                                                Milestone {m.id}
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+                        </div>
+
+                        {/* The Active Progress Fill */}
+                        <motion.div
+                            className={cn("absolute left-0 top-0 bottom-0 rounded-full z-10", activeColor, shadowColor)}
+                            initial={{ width: "0%" }}
+                            animate={{ width: `${progress}%` }}
+                            transition={{ type: "spring", stiffness: 50, damping: 20 }}
+                        />
+                    </div>
+
+                    {/* MOON (Finish) */}
+                    <div className="relative group">
+                        <div className={cn(
+                            "absolute inset-0 opacity-0 blur-md rounded-full transition-opacity duration-1000",
+                            progress === 100 ? "opacity-50" : "opacity-0",
+                            activeColor
+                        )} />
+                        <div className="relative w-6 h-6 md:w-8 md:h-8 opacity-60 grayscale group-hover:grayscale-0 transition-all duration-500">
+                            <Image src="/assets/moon.png" alt="Moon" fill className="object-contain" />
+                        </div>
+                        <span className="absolute -bottom-4 left-1/2 -translate-x-1/2 text-[8px] font-mono text-white/40 tracking-widest uppercase">
+                            LUN
+                        </span>
+                    </div>
+
+                </GlassContainer>
+            </motion.div>
         </div>
     );
 }

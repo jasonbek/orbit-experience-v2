@@ -2,16 +2,9 @@
 
 import { useStore } from '@/store/useStore';
 import { useEffect, useState } from 'react';
-import { milestones } from '@/data/milestones';
 import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { motion, AnimatePresence } from 'framer-motion';
-import { OrientationShield } from '@/components/simulation/OrientationShield';
 import { Viewport } from '@/components/simulation/Viewport';
-import { Challenges } from '@/components/hud/Challenges';
-import { MissionReport } from '@/components/simulation/MissionReport';
-import { RoleSelect } from '@/components/simulation/RoleSelect';
-import { NavigationRail } from '@/components/simulation/NavigationRail';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -19,8 +12,6 @@ function cn(...inputs: ClassValue[]) {
 
 export default function OrbitDashboard() {
   const _hasHydrated = useStore((state) => state._hasHydrated);
-  const currentStep = useStore((state) => state.currentStep);
-  const isTransmissionOpen = useStore((state) => state.isTransmissionOpen);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -39,8 +30,6 @@ export default function OrbitDashboard() {
 
   return (
     <main className="relative flex min-h-screen items-center justify-center bg-[#050505] p-4 md:p-12 overflow-hidden">
-      {/* Mobile Safety Rail */}
-      <OrientationShield />
 
       {/* Unified Viewport: 16:9 Aspect Ratio Lock */}
       <div className="w-full max-w-[1920px] mx-auto">
@@ -49,51 +38,8 @@ export default function OrbitDashboard() {
           "before:absolute before:inset-0 before:z-50 before:pointer-events-none before:bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.4)_100%)]"
         )}>
 
-          {/* Layer 1: Simulation (Trajectory & Background Environment) */}
+          {/* Main Visual Orchestrator (V2.2 Spec) */}
           <Viewport />
-
-          {/* Layer 2: HUD Interface (Navigation Rail) */}
-          {currentStep > 0 && <NavigationRail />}
-
-          {/* Layer 3: Main Phase Flow (AnimatePresence) */}
-          <div className="z-10">
-            <AnimatePresence mode="wait">
-              {currentStep === 0 ? (
-                <motion.div
-                  key="role-select"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <RoleSelect />
-                </motion.div>
-              ) : currentStep >= 1 && currentStep <= milestones.length ? (
-                <motion.div
-                  key="challenges-container"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                >
-                  <AnimatePresence>
-                    {isTransmissionOpen && (
-                      <Challenges />
-                    )}
-                  </AnimatePresence>
-                </motion.div>
-              ) : (
-                <motion.div
-                  key="report"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.5 }}
-                >
-                  <MissionReport />
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
 
           {/* Layer 4: Perimeter Data (Cosmetic HUD) */}
           <div className="absolute inset-0 z-20 pointer-events-none p-8 flex flex-col justify-between">
@@ -107,7 +53,7 @@ export default function OrbitDashboard() {
               </div>
               <div className="text-right">
                 <div className="font-mono text-[10px] text-zinc-500 tracking-tighter">COORD_SYSTEM</div>
-                <div className="font-mono text-xs text-zinc-300">UTM_WGS84_V2.1</div>
+                <div className="font-mono text-xs text-zinc-300">UTM_WGS84_V2.2</div>
               </div>
             </div>
 
