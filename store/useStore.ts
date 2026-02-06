@@ -95,7 +95,7 @@ export const useStore = create<OrbitState>()(
       resetMission: () => set({
         role: null,
         currentStep: '1',
-        unlockedIndex: 0,
+        unlockedIndex: 1,
         completedMilestoneIds: [],
         isShaking: false,
         correctPulse: false,

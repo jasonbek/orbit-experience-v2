@@ -7,6 +7,7 @@ import { twMerge } from 'tailwind-merge';
 import { OrientationShield } from '@/components/simulation/OrientationShield';
 import { Trajectory } from '@/components/simulation/Trajectory';
 import { Challenges } from '@/components/hud/Challenges';
+import { MissionReport } from '@/components/simulation/MissionReport';
 
 function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -14,7 +15,10 @@ function cn(...inputs: ClassValue[]) {
 
 export default function OrbitDashboard() {
   const _hasHydrated = useStore((state) => state._hasHydrated);
+  const completedMilestoneIds = useStore((state) => state.completedMilestoneIds);
   const [isMounted, setIsMounted] = useState(false);
+
+  const isMissionComplete = completedMilestoneIds.length === 10;
 
   useEffect(() => {
     setIsMounted(true);
@@ -55,9 +59,13 @@ export default function OrbitDashboard() {
             <Trajectory />
           </div>
 
-          {/* Layer 2: HUD Interface (Challenges) */}
+          {/* Layer 2: HUD Interface (Challenges) / Mission Report */}
           <div className="z-10">
-            <Challenges />
+            {isMissionComplete ? (
+              <MissionReport />
+            ) : (
+              <Challenges />
+            )}
           </div>
 
           {/* Layer 3: Perimeter Data (Cosmetic HUD) */}
