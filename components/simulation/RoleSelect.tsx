@@ -46,7 +46,6 @@ export function RoleSelect() {
                     className="text-center space-y-1 md:space-y-2"
                 >
                     <div className="flex justify-center mb-4 opacity-90">
-                        {/* FIXED: Added style={{ height: 'auto' }} to prevent aspect ratio warning */}
                         <Image
                             src="/assets/logo.svg"
                             alt="Canada ICI"
@@ -65,7 +64,8 @@ export function RoleSelect() {
                 </motion.div>
 
                 {/* Card Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 px-2 md:px-0">
+                {/* FIXED: Changed 'grid-cols-1' to 'grid-cols-2' to force side-by-side on mobile */}
+                <div className="grid grid-cols-2 gap-3 md:gap-6 px-2 md:px-0">
                     {cards.map((card, i) => (
                         <motion.button
                             key={card.id}
@@ -81,13 +81,13 @@ export function RoleSelect() {
 
                                 {/* Avatar */}
                                 <div className="absolute bottom-0 right-0 w-3/4 h-3/4 transition-all duration-700 origin-bottom-right opacity-20 md:opacity-60 group-hover:opacity-100 group-hover:scale-105 grayscale md:grayscale group-hover:grayscale-0">
-                                    {/* FIXED: Added sizes prop */}
                                     <Image
                                         src={card.image}
                                         alt={card.title}
                                         fill
                                         className="object-contain object-bottom-right"
-                                        sizes="(max-width: 768px) 75vw, 50vw"
+                                        // FIXED: Updated sizes to 50vw since it's always 2 columns now
+                                        sizes="(max-width: 768px) 50vw, 50vw"
                                     />
                                 </div>
 

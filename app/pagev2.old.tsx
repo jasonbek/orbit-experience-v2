@@ -29,27 +29,20 @@ export default function OrbitDashboard() {
   }
 
   return (
-    // FIX 1: Use 'h-dvh' (Dynamic Height) and 'overflow-hidden' to kill scrollbars
-    // FIX 2: Remove padding on mobile ('p-0'), keep padding on desktop ('md:p-12')
-    <main className="relative flex h-dvh w-full items-center justify-center bg-[#050505] p-0 md:p-12 overflow-hidden">
+    <main className="relative flex min-h-screen items-center justify-center bg-[#050505] p-4 md:p-12 overflow-hidden">
 
-      <div className="w-full max-w-[1920px] mx-auto h-full md:h-auto">
-        {/* FIX 3: Responsive Container 
-            - Mobile: 'h-full w-full rounded-none border-0' (Full Screen Immersion)
-            - Desktop: 'aspect-video rounded-2xl border' (Cinematic Shell)
-        */}
+      {/* Unified Viewport: 16:9 Aspect Ratio Lock */}
+      <div className="w-full max-w-[1920px] mx-auto">
         <div className={cn(
-          "relative w-full overflow-hidden bg-black shadow-[0_0_100px_rgba(0,0,0,0.5)]",
-          "h-full md:aspect-video md:rounded-2xl md:border md:border-white/5", // Responsive Switching
+          "relative aspect-video w-full overflow-hidden rounded-2xl border border-white/5 bg-black shadow-[0_0_100px_rgba(0,0,0,0.5)]",
           "before:absolute before:inset-0 before:z-50 before:pointer-events-none before:bg-[radial-gradient(circle_at_50%_50%,transparent_0%,rgba(0,0,0,0.4)_100%)]"
         )}>
 
-          {/* Main Visual Orchestrator */}
+          {/* Main Visual Orchestrator (V2.2 Spec) */}
           <Viewport />
 
           {/* Layer 4: Perimeter Data (Cosmetic HUD) */}
-          {/* We hide some of this on mobile to prevent clutter, or keep it if you prefer */}
-          <div className="absolute inset-0 z-20 pointer-events-none p-4 md:p-8 flex flex-col justify-between">
+          <div className="absolute inset-0 z-20 pointer-events-none p-8 flex flex-col justify-between">
             <div className="flex justify-between items-start">
               <div className="flex flex-col gap-1">
                 <div className="font-mono text-[10px] text-zinc-500 tracking-tighter">MISSION STATUS</div>
@@ -66,7 +59,7 @@ export default function OrbitDashboard() {
 
             <div className="flex justify-between items-end">
               <div className="font-mono text-[9px] text-zinc-700 tracking-[0.3em] uppercase">
-                © 2025 Canada ICI
+                © 2025 Canada ICI // Orbital Dynamics
               </div>
               <div className="flex gap-4">
                 {[1, 2, 3].map(i => (
@@ -76,12 +69,12 @@ export default function OrbitDashboard() {
             </div>
           </div>
 
-          {/* Layer 5: Grain/Noise */}
+          {/* Layer 5: Grain/Noise (Rauno Texture) */}
           <div className="absolute inset-0 z-50 pointer-events-none opacity-[0.03]"
             style={{ backgroundImage: 'url("https://grainy-gradients.vercel.app/noise.svg")' }} />
 
-          {/* Layer 6: Rauno Inner Lighting */}
-          <div className="absolute inset-0 z-50 pointer-events-none rounded-none md:rounded-2xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.02)]" />
+          {/* Rauno 1px Inner Lighting */}
+          <div className="absolute inset-0 z-50 pointer-events-none rounded-2xl shadow-[inset_0_1px_0_0_rgba(255,255,255,0.05),inset_0_0_0_1px_rgba(255,255,255,0.02)]" />
         </div>
       </div>
     </main>
