@@ -36,6 +36,7 @@ export function RoleSelect() {
         },
     ];
 
+    {/* 1. Dynamic Environment Background ... */ }
     return (
         // FIX 1: Strict Full Height with Flex Column (No Scrolling)
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-2 md:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md">

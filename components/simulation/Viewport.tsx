@@ -24,10 +24,21 @@ export function Viewport() {
 
     // Determine active background
     const currentBg = role ? backgroundMap[role] : null;
-
     return (
         <div className="relative w-full h-full overflow-hidden bg-slate-950">
-
+            {/* --- TEMP DEV BUTTON (Remove before launch) --- */}
+            {/* This button resets the local storage so you can restart the mission */}
+            <button
+                className="fixed top-2 right-2 z-[100] bg-red-500/20 hover:bg-red-500 text-red-200 hover:text-white px-3 py-1 text-[10px] font-mono uppercase tracking-widest border border-red-500/50 rounded transition-all backdrop-blur-md"
+                onClick={() => {
+                    // This clears the 'orbit-mission-v2.2' key from your browser
+                    useStore.persist.clearStorage();
+                    window.location.reload();
+                }}
+            >
+                [RESET SYSTEM]
+            </button>
+            {/* ----------------------------------------------- */}
             {/* 1. Dynamic Environment Background (World Space) */}
             <div className="absolute inset-0 z-0">
                 <AnimatePresence mode="wait">
