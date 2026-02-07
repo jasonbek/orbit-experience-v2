@@ -20,7 +20,7 @@ export function GlassContainer({
     return (
         <div
             className={cn(
-                "relative overflow-hidden rounded-xl backdrop-blur-[12px] transition-all duration-500",
+                "relative overflow-hidden rounded-xl backdrop-blur-[4px] transition-all duration-500",
                 "shadow-[inset_0_1px_0_0_rgba(255,255,255,0.1),0_0_0_1px_rgba(255,255,255,0.05)]",
                 {
                     "bg-[#D80010]/10 shadow-[0_0_40px_-10px_rgba(216,0,16,0.3)]": variant === "red",

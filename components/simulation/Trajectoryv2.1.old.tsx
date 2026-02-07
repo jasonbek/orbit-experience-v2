@@ -40,6 +40,7 @@ export function Trajectory() {
     };
 
     return (
+        // FIXED: Added z-10 to ensure it sits ABOVE the background
         <div className="absolute inset-0 z-10 pointer-events-auto flex items-center justify-center p-2 md:p-4 lg:p-6 transition-all duration-700">
 
             {/* Glass Dashboard */}
@@ -48,6 +49,8 @@ export function Trajectory() {
                 className="relative w-full h-full shadow-2xl border-white/10"
             >
                 {/* --- LAYER A: PLANETS --- */}
+                {/* FIXED: Removed negative positioning (-10%) so they aren't clipped by overflow-hidden */}
+                {/* FIXED: Added 'sizes' prop to silence performance warning */}
 
                 {/* Earth (Launch) - Bottom Left */}
                 <motion.div
@@ -118,6 +121,8 @@ export function Trajectory() {
                         const isUnlocked = (i + 1) <= unlockedIndex;
                         const isCurrent = (i + 1) === currentStep;
                         const milestoneId = milestones[i].id;
+
+                        // FIXED: Pre-calculate radius to prevent "undefined" animation error
                         const targetRadius = isCurrent ? 10 : 6;
 
                         return (
@@ -129,12 +134,12 @@ export function Trajectory() {
                                 )}
                                 onClick={() => handleNodeClick(milestoneId)}
                             >
-                                {/* 1. Active Pulse Ring (RESTORED) */}
+                                {/* Active Pulse Ring */}
                                 {isCurrent && (
                                     <motion.circle
                                         cx={node.x}
                                         cy={node.y}
-                                        r={25}
+                                        r={25} // FIXED: Passed as number, not string
                                         fill={brandColor}
                                         initial={{ opacity: 0.4, scale: 0.5 }}
                                         animate={{ opacity: 0, scale: 3 }}
@@ -142,16 +147,19 @@ export function Trajectory() {
                                     />
                                 )}
 
-                                {/* 2. Invisible Hit Area (REPLACES the duplicate Outer Ring) */}
+                                {/* Outer Ring (Hover Target) */}
                                 <circle
                                     cx={node.x}
                                     cy={node.y}
-                                    r={30}
-                                    fill="transparent"
-                                    className="cursor-pointer"
+                                    r={15} // FIXED: Passed as number
+                                    className={cn(
+                                        "transition-all duration-300",
+                                        isCurrent ? "fill-white/20 scale-125" : "fill-transparent group-hover:fill-white/10"
+                                    )}
                                 />
 
-                                {/* 3. Core Node (The Dot) */}
+                                {/* Core Node */}
+                                {/* FIXED: Added 'initial' prop to prevent 'r: undefined' crash */}
                                 <motion.circle
                                     cx={node.x}
                                     cy={node.y}
