@@ -1,20 +1,24 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/store/useStore";
-import { Trajectory } from "@/components/simulation/Trajectory"; //
+import { Trajectory } from "@/components/simulation/Trajectory";
 import { RoleSelect } from "@/components/simulation/RoleSelect";
 import { MissionReport } from "@/components/simulation/MissionReport";
 import { Challenges } from "@/components/hud/Challenges";
+import { NavigationRail } from "@/components/simulation/NavigationRail";
 import { OrientationShield } from "@/components/simulation/OrientationShield";
-
-// REMOVED: import { NavigationRail } ...
 
 export function Viewport() {
     const role = useStore((state) => state.role);
     const currentStep = useStore((state) => state.currentStep);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     // Background map based on role
     const backgroundMap: Record<string, string> = {
@@ -24,6 +28,8 @@ export function Viewport() {
 
     // Determine active background
     const currentBg = role ? backgroundMap[role] : null;
+
+    if (!mounted) return null;
 
     return (
         <div className="relative w-full h-full overflow-hidden bg-slate-950">
@@ -62,7 +68,6 @@ export function Viewport() {
             </div>
 
             {/* 2. Trajectory Simulation (World Space) */}
-            {/* This renders the "Green Boxes" / 3D Nodes you want to keep */}
             <Trajectory />
 
             {/* 3. Interface Layer (HUD Space) */}
@@ -77,10 +82,11 @@ export function Viewport() {
                     {/* STEPS 1-10: Mission Loop */}
                     {currentStep >= 1 && currentStep <= 10 && (
                         <>
-                            {/* The Quiz HUD (Popup) */}
+                            {/* The Quiz HUD */}
                             <Challenges key="hud" />
 
-                            {/* REMOVED: NavigationRail (The bottom HUD is now completely gone) */}
+                            {/* The Navigation Rail (Bottom Bar) */}
+                            <NavigationRail key="nav-rail" />
                         </>
                     )}
 
