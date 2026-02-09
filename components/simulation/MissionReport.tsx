@@ -47,32 +47,14 @@ export function MissionReport() {
                             Mission Accomplished
                         </h1>
                         <p className="text-xs md:text-lg text-white/40 max-w-md mx-auto font-light leading-relaxed hidden md:block">
-                            The 2025 Orbital Stream has been successfully verified. Canada ICI systems are operating at peak efficiency.
+                            The 2025 Orbital Journey has been successfully Completed. Canada ICI thanks you for your bravery in making last year a success.
                         </p>
                         <p className="text-[10px] text-white/40 md:hidden uppercase tracking-widest">
                             Verification Complete // System Nominal
                         </p>
                     </div>
 
-                    {/* Stats Grid: V2.2 specifies ici-light-grey for labels */}
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-2 md:gap-4 py-4 md:py-8 border-y border-white/5">
-                        {summaryStats.map((stat, i) => (
-                            <motion.div
-                                key={stat.label}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: 0.4 + (i * 0.1) }}
-                                className="space-y-1 p-2 bg-white/[0.02] rounded-lg"
-                            >
-                                <div className="text-[8px] md:text-[10px] font-mono uppercase text-ici-light-grey tracking-wider">
-                                    {stat.label}
-                                </div>
-                                <div className="text-lg md:text-2xl font-bold text-white">
-                                    {stat.value}
-                                </div>
-                            </motion.div>
-                        ))}
-                    </div>
+
 
                     {/* CTA: V2.2 specifies solid ici-red */}
                     <div className="pt-2 md:pt-4">

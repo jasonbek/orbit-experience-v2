@@ -60,10 +60,10 @@ export function RoleSelect() {
                         />
                     </div>
                     <h1 className="text-xl md:text-6xl font-bold tracking-tighter text-white uppercase">
-                        NEURAL LINK <span className="text-white/30 font-light">INITIALIZED</span>
+                        CANADA ICI YEAR IN REVIEW <span className="text-white/30 font-light">INITIALIZED</span>
                     </h1>
                     <p className="text-[8px] md:text-sm text-white/50 font-mono tracking-[0.3em] uppercase">
-                        Identify your operating signature
+                        Identify your operating signature to begin 2025 orbital journey.
                     </p>
                 </motion.div>
 
