@@ -56,7 +56,7 @@ export function MissionReport() {
                         {/* FIX 7: Paragraph Visibility. 
                             'hidden lg:block' ensures this large text stays HIDDEN on mobile landscape 
                             (which has very little vertical height). */}
-                        <p className="text-xs lg:text-lg text-white/40 max-w-md mx-auto font-light leading-relaxed hidden lg:block">
+                        <p className="text-xs lg:text-lg text-white/40 max-w-md mx-auto font-light leading-relaxed">
                             The 2025 Orbital Journey has been successfully Completed. Canada ICI thanks you for your bravery in making last year a success.
                         </p>
 
