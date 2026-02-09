@@ -37,8 +37,8 @@ export function RoleSelect() {
     ];
 
     return (
-        // FIX 1: Added 'overflow-hidden' to prevent body scroll
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-2 md:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md overflow-hidden">
+        // FIX 1: Use 'h-[100dvh]' to strictly fit mobile browser viewports (ignoring address bars)
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-2 md:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md h-[100dvh] overflow-hidden">
 
             <div className="w-full max-w-5xl h-full flex flex-col space-y-1 md:space-y-8">
 
@@ -46,33 +46,35 @@ export function RoleSelect() {
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    // FIX 2: Removed top padding (pt-0) on mobile
+                    // FIX 2: Zero padding on top for mobile
                     className="text-center space-y-0.5 md:space-y-2 shrink-0 pt-0 md:pt-0"
                 >
-                    {/* FIX 3: Smaller Logo (w-[60px]) and tighter margin (mb-0.5) */}
+                    {/* FIX 3: Logo Constraints */}
                     <div className="flex justify-center mb-0.5 md:mb-4 opacity-90">
                         <Image
                             src="/assets/logo.svg"
                             alt="Canada ICI"
                             width={120}
                             height={40}
+                            // KEY FIX: 'h-auto' allows the image to scale correctly without distortion
                             className="brightness-0 invert w-[60px] md:w-[120px] h-auto"
+                            style={{ height: "auto" }}
                             priority
                         />
                     </div>
 
-                    {/* FIX 4: Smaller Title (text-sm) to prevent wrapping on short screens */}
+                    {/* FIX 4: Text-sm on mobile to prevent wrapping */}
                     <h1 className="text-sm md:text-6xl font-bold tracking-tighter text-white uppercase leading-tight">
                         CANADA ICI YEAR IN REVIEW <span className="text-white/30 font-light">INITIALIZED</span>
                     </h1>
 
-                    {/* FIX 5: HIDDEN Subtitle on mobile. Saves ~20px vertical space. */}
+                    {/* FIX 5: Hidden on mobile */}
                     <p className="hidden md:block text-[8px] md:text-sm text-white/50 font-mono tracking-[0.3em] uppercase">
                         Identify your operating signature to begin 2025 orbital journey.
                     </p>
                 </motion.div>
 
-                {/* CARD CONTAINER: Flex-1 fills remaining space */}
+                {/* CARD CONTAINER */}
                 <div className="flex-1 min-h-0 w-full pt-1">
                     <div className="grid grid-cols-2 gap-2 md:gap-6 h-full">
                         {cards.map((card, i) => (
