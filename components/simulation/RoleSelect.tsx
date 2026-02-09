@@ -37,47 +37,45 @@ export function RoleSelect() {
     ];
 
     return (
-        // FIX 1: Use 'h-[100dvh]' to strictly fit mobile browser viewports
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-2 lg:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md h-[100dvh] overflow-hidden">
+        // FIX 1: Increased padding (p-6) to fix logo crashing into browser edge
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 lg:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md h-[100dvh] overflow-hidden">
 
-            <div className="w-full max-w-5xl h-full flex flex-col space-y-1 lg:space-y-8">
+            <div className="w-full max-w-5xl h-full flex flex-col space-y-4 lg:space-y-8">
 
-                {/* HEADER SECTION: Compact Mode */}
+                {/* HEADER SECTION: Restored Breathing Room */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    // FIX 2: Zero padding on top for mobile (changed md -> lg)
-                    className="text-center space-y-0.5 lg:space-y-2 shrink-0 pt-0 lg:pt-0"
+                    // Added shrink-0 so header doesn't get crushed
+                    className="text-center space-y-2 lg:space-y-4 shrink-0"
                 >
-                    {/* FIX 3: Logo Constraints */}
-                    <div className="flex justify-center mb-0.5 lg:mb-4 opacity-90">
+                    {/* Logo: Standard size restored */}
+                    <div className="flex justify-center opacity-90">
                         <Image
                             src="/assets/logo.svg"
                             alt="Canada ICI"
-                            width={60}
-                            height={20}
-                            // KEY FIX: Changed 'md:w-[120px]' to 'lg:w-[120px]'
-                            // This ensures phones in landscape (which are often >768px) still see the 60px logo
-                            className="brightness-0 invert w-[60px] lg:w-[120px] h-auto"
+                            width={80}
+                            height={30}
+                            className="brightness-0 invert w-[80px] lg:w-[120px] h-auto"
                             style={{ height: "auto" }}
                             priority
                         />
                     </div>
 
-                    {/* FIX 4: Text-sm on mobile (changed md -> lg) */}
-                    <h1 className="text-sm lg:text-6xl font-bold tracking-tighter text-white uppercase leading-tight">
+                    {/* Title: Restored to text-xl (Mobile) / text-6xl (Desktop) */}
+                    <h1 className="text-xl lg:text-6xl font-bold tracking-tighter text-white uppercase leading-tight">
                         YEAR IN REVIEW <span className="text-white/30 font-light">INITIALIZED</span>
                     </h1>
 
-                    {/* FIX 5: Hidden on mobile (changed md -> lg) */}
-                    <p className="hidden lg:block text-[8px] lg:text-sm text-white/50 font-mono tracking-[0.3em] uppercase">
+                    {/* Subtitle: Restored on Mobile (text-[9px]) */}
+                    <p className="text-[9px] lg:text-sm text-white/50 font-mono tracking-[0.3em] uppercase">
                         Identify your operating signature to begin 2025 orbital journey.
                     </p>
                 </motion.div>
 
-                {/* CARD CONTAINER */}
-                <div className="flex-1 min-h-0 w-full pt-1">
-                    <div className="grid grid-cols-2 gap-2 lg:gap-6 h-full">
+                {/* CARD CONTAINER: flex-1 allows cards to fill remaining space */}
+                <div className="flex-1 min-h-0 w-full">
+                    <div className="grid grid-cols-2 gap-3 lg:gap-6 h-full">
                         {cards.map((card, i) => (
                             <motion.button
                                 key={card.id}
@@ -103,18 +101,17 @@ export function RoleSelect() {
                                     </div>
 
                                     {/* Content */}
-                                    {/* FIX 6: Reduced padding (p-3) */}
-                                    <div className="relative z-10 p-3 lg:p-8 flex flex-col justify-between h-full">
-                                        <div className="space-y-1 lg:space-y-3">
-                                            <div className={cn("h-1 w-6 lg:w-8 rounded-full mb-1 lg:mb-2 transition-all duration-500", card.variant === "blue" ? "bg-[#009DD6]" : "bg-[#D80010]")} />
+                                    <div className="relative z-10 p-4 lg:p-8 flex flex-col justify-between h-full">
+                                        <div className="space-y-2 lg:space-y-3">
+                                            <div className={cn("h-1 w-6 lg:w-8 rounded-full transition-all duration-500", card.variant === "blue" ? "bg-[#009DD6]" : "bg-[#D80010]")} />
 
-                                            {/* FIX 7: Smaller text-xs title (changed md -> lg) */}
-                                            <h2 className="text-xs lg:text-3xl font-bold text-white tracking-widest drop-shadow-lg leading-tight">
+                                            {/* Title: Slightly larger on mobile again */}
+                                            <h2 className="text-sm lg:text-3xl font-bold text-white tracking-widest drop-shadow-lg leading-tight">
                                                 {card.title}
                                             </h2>
 
-                                            {/* Hidden description on mobile (changed md -> lg) */}
-                                            <p className="hidden lg:block text-white/60 text-sm leading-relaxed max-w-[200px]">
+                                            {/* Description: Restored on Mobile with line-clamp to prevent overflow */}
+                                            <p className="text-white/60 text-[10px] lg:text-sm leading-tight lg:leading-relaxed max-w-[200px] line-clamp-3 lg:line-clamp-none">
                                                 {card.desc}
                                             </p>
                                         </div>
