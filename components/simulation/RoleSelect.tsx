@@ -54,8 +54,8 @@ export function RoleSelect() {
                         <Image
                             src="/assets/logo.svg"
                             alt="Canada ICI"
-                            width={120}
-                            height={40}
+                            width={60}
+                            height={20}
                             // KEY FIX: 'h-auto' allows the image to scale correctly without distortion
                             className="brightness-0 invert w-[60px] md:w-[120px] h-auto"
                             style={{ height: "auto" }}
@@ -65,7 +65,7 @@ export function RoleSelect() {
 
                     {/* FIX 4: Text-sm on mobile to prevent wrapping */}
                     <h1 className="text-sm md:text-6xl font-bold tracking-tighter text-white uppercase leading-tight">
-                        CANADA ICI YEAR IN REVIEW <span className="text-white/30 font-light">INITIALIZED</span>
+                        YEAR IN REVIEW <span className="text-white/30 font-light">INITIALIZED</span>
                     </h1>
 
                     {/* FIX 5: Hidden on mobile */}
