@@ -21,7 +21,7 @@ export function RoleSelect() {
         {
             id: "mission-control",
             title: "MISSION CONTROL",
-            desc: "Oversee the 2025 orbit from the Operations Center.",
+            desc: "Navigate our commanders to their goal; the moon.",
             image: "/assets/mission-control-avatar.png",
             color: "from-amg-blue/30 to-amg-blue/0",
             variant: "blue",
@@ -29,7 +29,7 @@ export function RoleSelect() {
         {
             id: "commander",
             title: "COMMANDER",
-            desc: "Pilot the vessel through the milestone trajectory.",
+            desc: "Command your vessel with the guidance of Mission Control.",
             image: "/assets/commander-avatar.png",
             color: "from-ici-red/30 to-ici-red/0",
             variant: "red",
