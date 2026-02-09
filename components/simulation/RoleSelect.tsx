@@ -36,40 +36,42 @@ export function RoleSelect() {
         },
     ];
 
-    {/* 1. Dynamic Environment Background ... */ }
     return (
-        // FIX 1: Strict Full Height with Flex Column (No Scrolling)
         <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-2 md:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md">
 
-            <div className="w-full max-w-5xl h-full flex flex-col space-y-2 md:space-y-8">
+            <div className="w-full max-w-5xl h-full flex flex-col space-y-1 md:space-y-8">
 
-                {/* FIX 2: Header is 'shrink-0' (It takes fixed space, never squishes) */}
+                {/* HEADER SECTION: Compact Mode applied to new Copy */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center space-y-1 md:space-y-2 shrink-0 pt-2 md:pt-0"
+                    className="text-center space-y-0.5 md:space-y-2 shrink-0 pt-1 md:pt-0"
                 >
-                    <div className="flex justify-center mb-1 md:mb-4 opacity-90">
+                    {/* Logo: Shrunk to w-[60px] on mobile */}
+                    <div className="flex justify-center mb-0.5 md:mb-4 opacity-90">
                         <Image
                             src="/assets/logo.svg"
                             alt="Canada ICI"
                             width={120}
                             height={40}
-                            className="brightness-0 invert w-[80px] md:w-[120px] h-auto"
+                            className="brightness-0 invert w-[60px] md:w-[120px] h-auto"
                             priority
                         />
                     </div>
-                    <h1 className="text-xl md:text-6xl font-bold tracking-tighter text-white uppercase">
+
+                    {/* Title: Reduced to text-lg on mobile to handle longer text */}
+                    <h1 className="text-lg md:text-6xl font-bold tracking-tighter text-white uppercase leading-tight">
                         CANADA ICI YEAR IN REVIEW <span className="text-white/30 font-light">INITIALIZED</span>
                     </h1>
-                    <p className="text-[8px] md:text-sm text-white/50 font-mono tracking-[0.3em] uppercase">
+
+                    {/* Subtitle: HIDDEN on mobile to save vertical space */}
+                    <p className="hidden md:block text-[8px] md:text-sm text-white/50 font-mono tracking-[0.3em] uppercase">
                         Identify your operating signature to begin 2025 orbital journey.
                     </p>
                 </motion.div>
 
-                {/* FIX 3: Container is 'flex-1 min-h-0' 
-            (This forces the grid to fit in remaining space, rather than pushing out) */}
-                <div className="flex-1 min-h-0 w-full">
+                {/* CARD CONTAINER */}
+                <div className="flex-1 min-h-0 w-full pt-1">
                     <div className="grid grid-cols-2 gap-2 md:gap-6 h-full">
                         {cards.map((card, i) => (
                             <motion.button
@@ -78,7 +80,6 @@ export function RoleSelect() {
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: 0.2 + (i * 0.1), type: "spring", stiffness: 300, damping: 30 }}
                                 onClick={() => handleSelect(card.id as any)}
-                                // FIX 4: Card is 'h-full', filling the squished container exactly
                                 className="group relative text-left h-full w-full transition-all duration-500 hover:scale-[1.01] active:scale-[0.98]"
                             >
                                 <GlassContainer variant={card.variant as any} className="h-full relative overflow-hidden transition-all duration-500 group-hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]">
@@ -101,12 +102,12 @@ export function RoleSelect() {
                                         <div className="space-y-1 md:space-y-3">
                                             <div className={cn("h-1 w-6 md:w-8 rounded-full mb-1 md:mb-2 transition-all duration-500", card.variant === "blue" ? "bg-[#009DD6]" : "bg-[#D80010]")} />
 
-                                            <h2 className="text-sm md:text-3xl font-bold text-white tracking-widest drop-shadow-lg leading-tight">
+                                            {/* Reduced to text-xs on mobile */}
+                                            <h2 className="text-xs md:text-3xl font-bold text-white tracking-widest drop-shadow-lg leading-tight">
                                                 {card.title}
                                             </h2>
 
-                                            {/* FIX 5: HIDDEN on Mobile Landscape. 
-                            There is no room for this text on a 375px high screen. */}
+                                            {/* Hidden on Mobile */}
                                             <p className="hidden md:block text-white/60 text-sm leading-relaxed max-w-[200px]">
                                                 {card.desc}
                                             </p>
