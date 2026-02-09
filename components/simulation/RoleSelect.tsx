@@ -37,17 +37,19 @@ export function RoleSelect() {
     ];
 
     return (
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-2 md:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md">
+        // FIX 1: Added 'overflow-hidden' to prevent body scroll
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-2 md:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md overflow-hidden">
 
             <div className="w-full max-w-5xl h-full flex flex-col space-y-1 md:space-y-8">
 
-                {/* HEADER SECTION: Compact Mode applied to new Copy */}
+                {/* HEADER SECTION: Compact Mode */}
                 <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="text-center space-y-0.5 md:space-y-2 shrink-0 pt-1 md:pt-0"
+                    // FIX 2: Removed top padding (pt-0) on mobile
+                    className="text-center space-y-0.5 md:space-y-2 shrink-0 pt-0 md:pt-0"
                 >
-                    {/* Logo: Shrunk to w-[60px] on mobile */}
+                    {/* FIX 3: Smaller Logo (w-[60px]) and tighter margin (mb-0.5) */}
                     <div className="flex justify-center mb-0.5 md:mb-4 opacity-90">
                         <Image
                             src="/assets/logo.svg"
@@ -59,18 +61,18 @@ export function RoleSelect() {
                         />
                     </div>
 
-                    {/* Title: Reduced to text-lg on mobile to handle longer text */}
-                    <h1 className="text-lg md:text-6xl font-bold tracking-tighter text-white uppercase leading-tight">
+                    {/* FIX 4: Smaller Title (text-sm) to prevent wrapping on short screens */}
+                    <h1 className="text-sm md:text-6xl font-bold tracking-tighter text-white uppercase leading-tight">
                         CANADA ICI YEAR IN REVIEW <span className="text-white/30 font-light">INITIALIZED</span>
                     </h1>
 
-                    {/* Subtitle: HIDDEN on mobile to save vertical space */}
+                    {/* FIX 5: HIDDEN Subtitle on mobile. Saves ~20px vertical space. */}
                     <p className="hidden md:block text-[8px] md:text-sm text-white/50 font-mono tracking-[0.3em] uppercase">
                         Identify your operating signature to begin 2025 orbital journey.
                     </p>
                 </motion.div>
 
-                {/* CARD CONTAINER */}
+                {/* CARD CONTAINER: Flex-1 fills remaining space */}
                 <div className="flex-1 min-h-0 w-full pt-1">
                     <div className="grid grid-cols-2 gap-2 md:gap-6 h-full">
                         {cards.map((card, i) => (
@@ -98,16 +100,17 @@ export function RoleSelect() {
                                     </div>
 
                                     {/* Content */}
+                                    {/* FIX 6: Reduced padding (p-3) */}
                                     <div className="relative z-10 p-3 md:p-8 flex flex-col justify-between h-full">
                                         <div className="space-y-1 md:space-y-3">
                                             <div className={cn("h-1 w-6 md:w-8 rounded-full mb-1 md:mb-2 transition-all duration-500", card.variant === "blue" ? "bg-[#009DD6]" : "bg-[#D80010]")} />
 
-                                            {/* Reduced to text-xs on mobile */}
+                                            {/* FIX 7: Smaller text-xs title */}
                                             <h2 className="text-xs md:text-3xl font-bold text-white tracking-widest drop-shadow-lg leading-tight">
                                                 {card.title}
                                             </h2>
 
-                                            {/* Hidden on Mobile */}
+                                            {/* Hidden description on mobile */}
                                             <p className="hidden md:block text-white/60 text-sm leading-relaxed max-w-[200px]">
                                                 {card.desc}
                                             </p>
