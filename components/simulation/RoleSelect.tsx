@@ -31,8 +31,9 @@ export function RoleSelect() {
             title: "COMMANDER",
             desc: "Command your vessel with the guidance of Mission Control.",
             image: "/assets/commander-avatar.png",
-            color: "from-ici-red/30 to-ici-red/0",
-            variant: "red",
+            // S3: white-dominant palette, red only as punctuation
+            color: "from-white/20 to-white/0",
+            variant: "white",
         },
     ];
 
@@ -90,7 +91,7 @@ export function RoleSelect() {
                                     <div className={cn("absolute inset-0 bg-gradient-to-b opacity-10 lg:opacity-0 group-hover:opacity-100 transition-opacity duration-500", card.color)} />
 
                                     {/* Avatar */}
-                                    <div className="absolute bottom-0 right-0 w-3/4 h-3/4 transition-all duration-700 origin-bottom-right opacity-20 lg:opacity-60 group-hover:opacity-100 group-hover:scale-105 grayscale lg:grayscale group-hover:grayscale-0">
+                                    <div className="absolute bottom-0 right-0 w-3/4 h-3/4 transition-all duration-700 origin-bottom-right opacity-40 lg:opacity-60 group-hover:opacity-100 group-hover:scale-105 grayscale lg:grayscale group-hover:grayscale-0">
                                         <Image
                                             src={card.image}
                                             alt={card.title}
@@ -103,7 +104,10 @@ export function RoleSelect() {
                                     {/* Content */}
                                     <div className="relative z-10 p-4 lg:p-8 flex flex-col justify-between h-full">
                                         <div className="space-y-2 lg:space-y-3">
-                                            <div className={cn("h-1 w-6 lg:w-8 rounded-full transition-all duration-500", card.variant === "blue" ? "bg-[#009DD6]" : "bg-[#D80010]")} />
+                                            <div className={cn(
+                                                "h-1 w-6 lg:w-8 rounded-full transition-all duration-500",
+                                                card.variant === "blue" ? "bg-[#009DD6]" : card.variant === "white" ? "bg-white" : "bg-[#D80010]"
+                                            )} />
 
                                             {/* Title: Slightly larger on mobile again */}
                                             <h2 className="text-sm lg:text-3xl font-bold text-white tracking-widest drop-shadow-lg leading-tight">

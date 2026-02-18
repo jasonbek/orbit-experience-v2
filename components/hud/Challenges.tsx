@@ -7,6 +7,8 @@ import { milestones } from "@/data/milestones";
 import { GlassContainer } from "@/components/ui/GlassContainer";
 import { cn } from "@/lib/utils";
 import { useSoundSystem } from "@/hooks/useSoundSystem";
+import { useNumberScramble } from "@/hooks/useNumberScramble";
+import Image from "next/image";
 import { X } from "lucide-react";
 
 export function Challenges() {
@@ -19,18 +21,25 @@ export function Challenges() {
     const prefersReduced = useReducedMotion();
 
     const activeMilestone = milestones.find((m) => m.id === activeMilestoneId);
+
+    // Hook must be called unconditionally (before early return)
+    const { display: scrambledStat, isLockedIn, LOCKOUT_DURATION_MS } = useNumberScramble(
+        activeMilestone?.statNumber ?? ""
+    );
+
     if (!activeMilestone) return null;
+
+    // Respect reduced-motion preference — skip the scramble animation
+    const displayStat = prefersReduced ? activeMilestone.statNumber : scrambledStat;
 
     const isCompleted = completedMilestoneIds.includes(activeMilestone.id);
 
-    const containerVariant = role === "commander" ? "red" : "blue";
-    const highlightColor = role === "commander" ? "bg-[#D80010]" : "bg-[#009DD6]";
-    const textColor = role === "commander" ? "text-[#D80010]" : "text-[#009DD6]";
-    const borderColor = role === "commander" ? "border-[#D80010]/40" : "border-[#009DD6]/40";
-
-    const statTransition = prefersReduced
-        ? { duration: 0 }
-        : { type: "spring" as const, stiffness: 400, damping: 30 };
+    // S3: Commander uses white as primary UI color; red reserved for CTA and logo glow only
+    const containerVariant = role === "commander" ? "white" : "blue";
+    const highlightColor = role === "commander" ? "bg-[#D80010]" : "bg-[#009DD6]"; // CTA stays red
+    const textColor = role === "commander" ? "text-white" : "text-[#009DD6]";
+    const borderColor = role === "commander" ? "border-white/30" : "border-[#009DD6]/40";
+    const glowColor = role === "commander" ? "#D80010" : "#009DD6"; // pulsing logo glow stays red
 
     const handleConfirm = () => {
         playSuccess();
@@ -58,24 +67,40 @@ export function Challenges() {
                         {/* Header */}
                         <div className="bg-white/5 border-b border-white/10 p-3 md:p-4 flex justify-between items-center shrink-0">
                             <div className="flex items-center gap-2">
-                                <span className={cn(
-                                    "w-2 h-2 rounded-full shadow-lg",
-                                    isCompleted ? highlightColor : `animate-pulse ${highlightColor}`
-                                )} />
+                                {/* S2 — pulsing logo replaces the dot indicator */}
+                                <motion.div
+                                    animate={{
+                                        filter: [
+                                            `brightness(0) invert(1) drop-shadow(0 0 2px ${glowColor})`,
+                                            `brightness(0) invert(1) drop-shadow(0 0 8px ${glowColor})`,
+                                            `brightness(0) invert(1) drop-shadow(0 0 2px ${glowColor})`,
+                                        ],
+                                    }}
+                                    transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+                                >
+                                    <Image
+                                        src="/assets/logo.svg"
+                                        alt=""
+                                        width={16}
+                                        height={7}
+                                        style={{ height: "auto" }}
+                                        aria-hidden
+                                    />
+                                </motion.div>
                                 <h2 className={cn("text-[10px] md:text-xs font-mono tracking-widest uppercase font-bold", textColor)}>
                                     {isCompleted ? "ARCHIVED TRANSMISSION" : "INCOMING TRANSMISSION"} // {activeMilestone.heading}
                                 </h2>
                             </div>
                             <button
                                 onPointerDown={handleClose}
-                                className="text-white/20 hover:text-white transition-colors"
+                                className="text-white/20 hover:text-white/50 transition-colors"
                             >
-                                <X className="w-4 h-4" />
+                                <X className="w-3 h-3" />
                             </button>
                         </div>
 
-                        {/* Body */}
-                        <div className="p-5 md:p-8 space-y-6">
+                        {/* Body — max-h on this div (not outer) because GlassContainer's inner wrapper breaks the flex chain */}
+                        <div className="p-4 md:p-8 space-y-4 md:space-y-6 overflow-y-auto max-h-[65dvh] md:max-h-none">
 
                             {/* Subject + Statement */}
                             <div className="space-y-2">
@@ -89,21 +114,23 @@ export function Challenges() {
 
                             {/* Stat Number — hero element */}
                             <div className={cn(
-                                "flex items-center justify-center py-6 md:py-8 rounded-lg border",
+                                "flex items-center justify-center py-4 md:py-8 rounded-lg border",
                                 borderColor,
                                 "bg-white/[0.03]"
                             )}>
                                 <motion.span
                                     key={activeMilestone.id}
-                                    initial={{ scale: 0.5, opacity: 0 }}
-                                    animate={{ scale: 1, opacity: 1 }}
-                                    transition={statTransition}
+                                    animate={isLockedIn && !prefersReduced
+                                        ? { scale: [1, 1.04, 1] }
+                                        : {}
+                                    }
+                                    transition={{ duration: LOCKOUT_DURATION_MS / 1000, ease: "easeOut" }}
                                     className={cn(
-                                        "text-6xl md:text-8xl font-black tracking-tight tabular-nums",
+                                        "text-4xl md:text-8xl font-black tracking-tight tabular-nums",
                                         textColor
                                     )}
                                 >
-                                    {activeMilestone.statNumber}
+                                    {displayStat}
                                 </motion.span>
                             </div>
 

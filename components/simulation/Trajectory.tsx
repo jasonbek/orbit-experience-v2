@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { useState, useRef, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { milestones } from "@/data/milestones";
 import { useStore } from "@/store/useStore";
@@ -9,17 +10,41 @@ import { cn } from "@/lib/utils";
 import { useSoundSystem } from "@/hooks/useSoundSystem";
 import { GlassContainer } from "@/components/ui/GlassContainer";
 
+// --- Auto-advance ---
+const AUTO_ADVANCE_DELAY_MS = 5000;
+
+// --- Comet ---
+const COMET_DURATION_MS = 5000;
+
+// --- Stagger timings (seconds) for the "Systems Online" onboarding sequence ---
+const STAGGER_HUD_DELAY_S = 0.3;
+const STAGGER_EARTH_DELAY_S = 0.7;
+const STAGGER_MOON_DELAY_S = 1.1;
+const STAGGER_PATH_DELAY_S = 1.5;
+const STAGGER_NODES_BASE_DELAY_S = 2.0;
+const STAGGER_NODE_INTERVAL_S = 0.08;
+
 export function Trajectory() {
     const currentStep = useStore((state) => state.currentStep);
     const unlockedIndex = useStore((state) => state.unlockedIndex);
     const role = useStore((state) => state.role);
     const openTransmission = useStore((state) => state.openTransmission);
+    const activeMilestoneId = useStore((state) => state.activeMilestoneId);
     const { playNotification } = useSoundSystem();
+
+    const [countdownProgress, setCountdownProgress] = useState(0);
+    const [isCountingDown, setIsCountingDown] = useState(false);
+    const autoAdvanceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const pulseIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+    const countdownStartRef = useRef<number>(0);
+    const prevActiveMilestoneIdRef = useRef<string | null>(null);
 
     // 1. Unified Brand Logic
     const isMissionControl = role === "mission-control";
-    const brandColor = isMissionControl ? "#009DD6" : "#D80010";
-    const variant = isMissionControl ? "blue" : "red";
+    // S3: Commander uses white as the primary UI color; red is reserved for CTA/active-node accents
+    const brandColor = isMissionControl ? "#009DD6" : "#FFFFFF";
+    const accentColor = isMissionControl ? "#009DD6" : "#D80010"; // active node pulse ring, CTA
+    const variant = isMissionControl ? "blue" : "white";
 
     const width = 1920;
     const height = 1080;
@@ -34,7 +59,54 @@ export function Trajectory() {
     const nodes = getTrajectoryNodes(milestones.length);
     const springConfig = { stiffness: 400, damping: 30 };
 
+    // Cancel the auto-advance countdown (stable — only uses refs and state setters)
+    const cancelCountdown = useCallback(() => {
+        if (autoAdvanceTimerRef.current) clearTimeout(autoAdvanceTimerRef.current);
+        if (pulseIntervalRef.current) clearInterval(pulseIntervalRef.current);
+        autoAdvanceTimerRef.current = null;
+        pulseIntervalRef.current = null;
+        setIsCountingDown(false);
+        setCountdownProgress(0);
+    }, []);
+
+    // Watch activeMilestoneId: start countdown on close
+    useEffect(() => {
+        const prev = prevActiveMilestoneIdRef.current;
+        prevActiveMilestoneIdRef.current = activeMilestoneId;
+
+        if (prev !== null && activeMilestoneId === null) {
+            // Card just closed — start countdown if there is a next node to open
+            const freshState = useStore.getState();
+            if (freshState.unlockedIndex <= milestones.length) {
+                countdownStartRef.current = Date.now();
+
+                // State updates are inside the async callback (satisfies no-setState-in-effect rule)
+                pulseIntervalRef.current = setInterval(() => {
+                    const elapsed = Date.now() - countdownStartRef.current;
+                    setIsCountingDown(true);
+                    setCountdownProgress(Math.min(elapsed / AUTO_ADVANCE_DELAY_MS, 1));
+                }, 50);
+
+                autoAdvanceTimerRef.current = setTimeout(() => {
+                    if (pulseIntervalRef.current) clearInterval(pulseIntervalRef.current);
+                    pulseIntervalRef.current = null;
+                    setIsCountingDown(false);
+                    setCountdownProgress(0);
+                    // Use fresh store state to avoid stale closure
+                    const { unlockedIndex: nextIndex, openTransmission: open } = useStore.getState();
+                    open(String(nextIndex));
+                }, AUTO_ADVANCE_DELAY_MS);
+            }
+        }
+    }, [activeMilestoneId, cancelCountdown]);
+
+    // Cleanup timers on unmount
+    useEffect(() => {
+        return () => cancelCountdown();
+    }, [cancelCountdown]);
+
     const handleNodeClick = (id: string) => {
+        cancelCountdown();
         playNotification();
         openTransmission(id);
     };
@@ -47,14 +119,35 @@ export function Trajectory() {
                 variant={variant}
                 className="relative w-full h-full shadow-2xl border-white/10"
             >
+                {/* --- HUD CORNERS: flicker on during stagger --- */}
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 0.7, 0.2, 0.9, 0.3, 1] }}
+                    transition={{ duration: 0.5, delay: STAGGER_HUD_DELAY_S, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+                    className="absolute top-3 left-4 pointer-events-none z-20"
+                >
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/25">MISSION STATUS</p>
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/40">TELEM_ACTIVE</p>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: [0, 0.7, 0.2, 0.9, 0.3, 1] }}
+                    transition={{ duration: 0.5, delay: STAGGER_HUD_DELAY_S, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
+                    className="absolute top-3 right-4 pointer-events-none z-20 text-right"
+                >
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/25">COORD_SYSTEM</p>
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/40">UTM_WGS84_V2.2</p>
+                </motion.div>
+
                 {/* --- LAYER A: PLANETS --- */}
 
                 {/* Earth (Launch) - Bottom Left */}
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 0.8, scale: 1 }}
-                    transition={{ duration: 1.5 }}
-                    className="absolute bottom-0 left-0 w-[40%] h-[40%] md:w-[25%] md:h-[25%] opacity-20 pointer-events-none z-0"
+                    transition={{ duration: 0.8, delay: STAGGER_EARTH_DELAY_S }}
+                    className="absolute bottom-0 left-0 w-[30%] h-[30%] md:w-[25%] md:h-[25%] opacity-20 pointer-events-none z-0"
                 >
                     <div className="relative w-full h-full grayscale opacity-40 mix-blend-screen">
                         <Image
@@ -71,7 +164,7 @@ export function Trajectory() {
                 <motion.div
                     initial={{ opacity: 0, scale: 0.8 }}
                     animate={{ opacity: 0.8, scale: 1 }}
-                    transition={{ duration: 1.5, delay: 0.5 }}
+                    transition={{ duration: 0.8, delay: STAGGER_MOON_DELAY_S }}
                     className="absolute top-0 right-0 w-[30%] h-[30%] md:w-[20%] md:h-[20%] opacity-20 pointer-events-none z-0"
                 >
                     <div className="relative w-full h-full grayscale opacity-40 mix-blend-screen">
@@ -100,7 +193,7 @@ export function Trajectory() {
                         strokeDasharray="12 12"
                     />
 
-                    {/* Active Progress Line */}
+                    {/* Active Progress Line — draws itself after stagger delay */}
                     <motion.path
                         d={pathData}
                         stroke={brandColor}
@@ -108,41 +201,109 @@ export function Trajectory() {
                         fill="none"
                         initial={{ pathLength: 0 }}
                         animate={{ pathLength: (unlockedIndex - 1) / (milestones.length - 1) }}
-                        transition={springConfig}
+                        transition={{ ...springConfig, delay: STAGGER_PATH_DELAY_S }}
                         strokeLinecap="round"
                         className="drop-shadow-[0_0_10px_currentColor]"
                     />
 
-                    {/* Interactive Nodes */}
+                    {/* --- COMET: travelling light along the trajectory --- */}
+                    <style>{`
+                        @keyframes cometTravel {
+                            from { offset-distance: 0%; }
+                            to   { offset-distance: 100%; }
+                        }
+                        .comet-element {
+                            offset-path: path("${pathData}");
+                            animation: cometTravel ${COMET_DURATION_MS}ms linear infinite;
+                            will-change: offset-distance;
+                        }
+                        .comet-tail {
+                            offset-rotate: auto;
+                        }
+                    `}</style>
+
+                    <motion.g
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ delay: STAGGER_PATH_DELAY_S + 0.6, duration: 0.8 }}
+                    >
+                        {/* Directional tail — elongated ellipse aligned to path direction */}
+                        <ellipse
+                            rx={18} ry={3}
+                            fill={brandColor}
+                            opacity={0.45}
+                            className="comet-element comet-tail"
+                            style={{ filter: "blur(3px)" }}
+                        />
+
+                        {/* Soft glow halo */}
+                        <circle
+                            r={7}
+                            fill={brandColor}
+                            opacity={0.3}
+                            className="comet-element"
+                            style={{ filter: "blur(5px)" }}
+                        />
+
+                        {/* Bright head */}
+                        <circle
+                            r={2.5}
+                            fill="white"
+                            opacity={0.95}
+                            className="comet-element"
+                        />
+                    </motion.g>
+
+                    {/* Interactive Nodes — blink on one by one */}
                     {nodes.map((node, i) => {
                         const isUnlocked = (i + 1) <= unlockedIndex;
                         const isCurrent = (i + 1) === currentStep;
                         const milestoneId = milestones[i].id;
                         const targetRadius = isCurrent ? 10 : 6;
+                        // The next pending node is the one the countdown will open
+                        const isNextPending = isCountingDown && (i + 1) === unlockedIndex;
 
                         return (
-                            <g
+                            <motion.g
                                 key={milestoneId}
                                 className={cn(
-                                    "cursor-pointer group transition-opacity duration-300",
-                                    !isUnlocked && "pointer-events-none opacity-20"
+                                    "cursor-pointer group",
+                                    !isUnlocked && "pointer-events-none"
                                 )}
                                 onClick={() => handleNodeClick(milestoneId)}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: isUnlocked ? 1 : 0.2 }}
+                                transition={{
+                                    delay: STAGGER_NODES_BASE_DELAY_S + i * STAGGER_NODE_INTERVAL_S,
+                                    duration: 0.15
+                                }}
                             >
-                                {/* 1. Active Pulse Ring (RESTORED) */}
+                                {/* 1. Active Pulse Ring — uses accentColor so Commander keeps red here */}
                                 {isCurrent && (
                                     <motion.circle
                                         cx={node.x}
                                         cy={node.y}
                                         r={25}
-                                        fill={brandColor}
+                                        fill={accentColor}
                                         initial={{ opacity: 0.4, scale: 0.5 }}
                                         animate={{ opacity: 0, scale: 3 }}
                                         transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
                                     />
                                 )}
 
-                                {/* 2. Invisible Hit Area (REPLACES the duplicate Outer Ring) */}
+                                {/* 2. Countdown glow — grows and brightens as timer approaches zero */}
+                                {isNextPending && (
+                                    <circle
+                                        cx={node.x}
+                                        cy={node.y}
+                                        r={20 + countdownProgress * 45}
+                                        fill={brandColor}
+                                        opacity={0.06 + countdownProgress * 0.36}
+                                        style={{ pointerEvents: "none" }}
+                                    />
+                                )}
+
+                                {/* 3. Invisible Hit Area */}
                                 <circle
                                     cx={node.x}
                                     cy={node.y}
@@ -151,7 +312,7 @@ export function Trajectory() {
                                     className="cursor-pointer"
                                 />
 
-                                {/* 3. Core Node (The Dot) */}
+                                {/* 4. Core Node (The Dot) */}
                                 <motion.circle
                                     cx={node.x}
                                     cy={node.y}
@@ -179,7 +340,7 @@ export function Trajectory() {
                                 >
                                     {milestones[i].title}
                                 </text>
-                            </g>
+                            </motion.g>
                         );
                     })}
                 </svg>

@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import React from "react";
 
 interface GlassContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-    variant?: "red" | "blue" | "neutral";
+    variant?: "red" | "blue" | "neutral" | "white";
     children: React.ReactNode;
 }
 
@@ -26,6 +26,7 @@ export function GlassContainer({
                     "bg-[#D80010]/10 shadow-[0_0_40px_-10px_rgba(216,0,16,0.3)]": variant === "red",
                     "bg-[#009DD6]/10 shadow-[0_0_40px_-10px_rgba(0,157,214,0.3)]": variant === "blue",
                     "bg-slate-950/40": variant === "neutral",
+                    "bg-white/5 shadow-[0_0_40px_-10px_rgba(255,255,255,0.15)]": variant === "white",
                 },
                 className
             )}

@@ -20,6 +20,10 @@ interface OrbitState {
   isTransmissionOpen: boolean;
   activeMilestoneId: string | null;
 
+  // Onboarding
+  hasSeenIntro: boolean;
+  setHasSeenIntro: () => void;
+
   // Actions
   confirmStatement: (milestoneId: string) => void;
   openTransmission: (milestoneId: string) => void;
@@ -43,6 +47,9 @@ export const useStore = create<OrbitState>()(
 
       isTransmissionOpen: false,
       activeMilestoneId: null,
+
+      hasSeenIntro: false,
+      setHasSeenIntro: () => set({ hasSeenIntro: true }),
 
       openTransmission: (id) => {
         const { currentStep } = get();
@@ -79,6 +86,7 @@ export const useStore = create<OrbitState>()(
         completedMilestoneIds: [],
         isTransmissionOpen: false,
         activeMilestoneId: null,
+        hasSeenIntro: false,
       }),
     }),
     {

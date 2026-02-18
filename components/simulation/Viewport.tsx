@@ -4,10 +4,11 @@ import React from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useStore } from "@/store/useStore";
-import { Trajectory } from "@/components/simulation/Trajectory"; //
+import { Trajectory } from "@/components/simulation/Trajectory";
 import { RoleSelect } from "@/components/simulation/RoleSelect";
 import { MissionReport } from "@/components/simulation/MissionReport";
 import { Challenges } from "@/components/hud/Challenges";
+import { IntroCard } from "@/components/simulation/IntroCard";
 import { OrientationShield } from "@/components/simulation/OrientationShield";
 
 // REMOVED: import { NavigationRail } ...
@@ -73,8 +74,9 @@ export function Viewport() {
             </div>
 
             {/* 2. Trajectory Simulation (World Space) */}
-            {/* This renders the "Green Boxes" / 3D Nodes you want to keep */}
-            <Trajectory />
+            {/* Conditional on currentStep >= 1 so it mounts fresh after role selection,
+                allowing the stagger animations to play from the start. */}
+            {currentStep >= 1 && <Trajectory />}
 
             {/* 3. Interface Layer (HUD Space) */}
             <div className="relative z-20 w-full h-full pointer-events-none">
@@ -91,7 +93,8 @@ export function Viewport() {
                             {/* The Quiz HUD (Popup) */}
                             <Challenges key="hud" />
 
-                            {/* REMOVED: NavigationRail (The bottom HUD is now completely gone) */}
+                            {/* Role onboarding intro card — shown once per session */}
+                            <IntroCard key="intro" />
                         </>
                     )}
 
@@ -101,6 +104,18 @@ export function Viewport() {
                     )}
 
                 </AnimatePresence>
+            </div>
+
+            {/* S1 — Watermark logo: etched into the glass, always present */}
+            <div className="absolute bottom-4 right-4 z-30 pointer-events-none select-none opacity-10">
+                <Image
+                    src="/assets/logo.svg"
+                    alt=""
+                    width={90}
+                    height={36}
+                    style={{ filter: "brightness(0) invert(1)", height: "auto" }}
+                    aria-hidden
+                />
             </div>
 
             {/* 4. Mobile Orientation Guard (Overlay) */}

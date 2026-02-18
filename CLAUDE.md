@@ -69,7 +69,6 @@ Role drives color variants across Trajectory, Challenges, and GlassContainer.
 ## Off-Limits (Absolute)
 
 - **`.old` / `.old.tsx` files** — never modify
-- **Auto-advance** — never implement automated step transitions
 - **Programmatic reset** — the `[RESET SYSTEM]` button is the only reset mechanism
 - **Global CSS borders** — maintain the translucent sci-fi glass theme throughout
 
