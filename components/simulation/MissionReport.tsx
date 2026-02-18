@@ -3,21 +3,12 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { useStore } from "@/store/useStore";
-import { milestones } from "@/data/milestones";
 import { GlassContainer } from "@/components/ui/GlassContainer";
 import { RotateCcw, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function MissionReport() {
     const resetMission = useStore((state) => state.resetMission);
-
-    // Extract key stats for the summary (V2.2 Audit: Consistent with ICI branding)
-    const summaryStats = [
-        { label: "Deal Volume", value: milestones[0].correctAnswer },
-        { label: "Underwriting", value: milestones[2].correctAnswer },
-        { label: "Market Reach", value: milestones[3].correctAnswer },
-        { label: "Community", value: milestones[9].correctAnswer },
-    ];
 
     return (
         // FIX 1: Changed md:p-4 to lg:p-4 (Keeps padding tight on landscape mobile)
