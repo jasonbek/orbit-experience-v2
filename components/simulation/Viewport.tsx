@@ -113,7 +113,8 @@ export function Viewport() {
                     alt=""
                     width={90}
                     height={36}
-                    style={{ filter: "brightness(0) invert(1)", height: "auto" }}
+                    className="h-auto"
+                    style={{ filter: "brightness(0) invert(1)" }}
                     aria-hidden
                 />
             </div>

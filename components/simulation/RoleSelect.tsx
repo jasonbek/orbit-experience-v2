@@ -58,7 +58,6 @@ export function RoleSelect() {
                             width={80}
                             height={30}
                             className="brightness-0 invert w-[80px] lg:w-[120px] h-auto"
-                            style={{ height: "auto" }}
                             priority
                         />
                     </div>
@@ -98,6 +97,7 @@ export function RoleSelect() {
                                             fill
                                             className="object-contain object-bottom-right"
                                             sizes="(max-width: 1024px) 50vw, 50vw"
+                                            priority
                                         />
                                     </div>
 

@@ -83,7 +83,7 @@ export function Challenges() {
                                         alt=""
                                         width={16}
                                         height={7}
-                                        style={{ height: "auto" }}
+                                        className="h-auto"
                                         aria-hidden
                                     />
                                 </motion.div>
