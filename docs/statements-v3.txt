@@ -1,0 +1,71 @@
+
+###Structure:
+
+Milestone Heading
+Milestone transmission subject
+Milestone transmission (AKA Statement)
+Large Number to be animated
+Text for Button to Confirm and Close
+
+###Milestone Statements
+
+01: Launch
+Payload check
+High-capacity deals were successfully injected into the 2025 orbital stream.
+2,500
+INITIALIZE STREAM
+
+02: Ascent
+Velocity Check
+Frequency of daily transactions processed throughout the fiscal year flight.
+30
+STABILIZE ORBIT
+
+03: Burn
+System Stress Test
+Total analytical core hours dedicated to risk-mitigation and underwriting protocols.
+4500
+ENGAGE ANALYTICS
+
+04: Vector
+Expansion Map
+Number of diverse market sectors served and receiving Canada ICI telemetry?
+80
+MAPPING COMPLETE
+
+
+05: Mid-Course
+Life Support Expansion
+Percentage mission crew capacity increased during the 2025 fiscal cycle.
+40
+SYNC CREW LOGS
+
+06: Junction
+Operational Longevity
+Senior officers (5/10/20yr) have reached decade-level flight milestones.
+20
+VERIFY TENURE
+
+07: Apex,
+Physical Readiness
+Total kilometers logged by the crew during the 2025 Wellness Initiative.
+800
+VALIDATE VITALS
+
+08: Approach
+Command Summit
+Number of Mission Crew converged for the 2025 high-altitude retreat?
+250
+LOCK APPROACH
+
+09: Far Side
+Signal Broadcast
+Sector-wide industry events were hosted through the Canada ICI hub.
+10
+BROADCAST DATA
+
+10: Splashdown
+Impact Shielding
+Charitable organizations supported by the 2025 mission payload?	
+4
+SEAL ARCHIVES

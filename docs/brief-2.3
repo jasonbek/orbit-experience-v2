@@ -1,0 +1,503 @@
+# Canada ICI — Orbit Experience v2.3
+## Agent Briefing Document
+### 2025 Year in Review — Interaction & Motion Revisions
+
+---
+
+> **Ground Rule:** Implement and test each item individually before moving to the next.
+> All timing values noted throughout should be exposed as named constants — not hardcoded — so they can be adjusted easily during testing sessions.
+
+**Implementation Order:** `F1 → F2 → F3 → A1 → A2 → A3 → S1 → S2 → S3`
+
+---
+
+## Contents
+
+| # | Category | Item | File(s) |
+|---|----------|------|---------|
+| F1 | Functionality | Card Close Behaviour | `Challenges.tsx` |
+| F2 | Functionality | Auto-Advance with Countdown | `Trajectory.tsx`, `Challenges.tsx`, `useStore.ts` |
+| F3 | Functionality | Role Onboarding — Systems Online | `Viewport.tsx`, `RoleSelect.tsx`, `useStore.ts`, `IntroCard.tsx` |
+| A1 | Animation | Trajectory Travelling Light — The Comet | `Trajectory.tsx` |
+| A2 | Animation | Intro Card Directional Arrow | `IntroCard.tsx` |
+| A3 | Animation | Transmission Decoding — The Number Reveal | `Challenges.tsx`, `useNumberScramble.ts` |
+| S1 | Styling | Viewport Watermark Logo | `Viewport.tsx` |
+| S2 | Styling | Transmission Card Header — Pulsing Logo | `Challenges.tsx` |
+| S3 | Styling | Commander Role — Palette Refinement | `RoleSelect.tsx`, `Trajectory.tsx`, `Challenges.tsx` |
+
+---
+
+---
+
+# SECTION 1 — FUNCTIONALITY
+
+---
+
+## F1 — Card Close Behaviour
+
+The CTA button at the bottom of each milestone card is the **primary and intended** method for dismissing the card. The X button in the top right corner may remain as a secondary escape hatch, but the designed flow should always guide the user toward the CTA button.
+
+### Behaviour Rules
+
+- The card **never auto-closes** under any circumstance.
+- The user must always manually confirm by clicking the CTA button at the bottom.
+- Each milestone already has unique CTA text defined in `data/milestones.ts` — use these as the button labels (e.g. `"BROADCAST DATA"`, `"SYNC CREW LOGS"`, `"VALIDATE VITALS"`).
+- The X button in the top right can remain but should be visually de-emphasized relative to the CTA button.
+
+### File to Edit
+
+```
+components/hud/Challenges.tsx
+```
+
+---
+
+## F2 — Auto-Advance with Countdown
+
+After a user closes a milestone card, a 5-second countdown timer begins automatically. When the timer completes, the next milestone card opens without requiring any user input. This removes friction while preserving the interactive feel of the experience.
+
+### Timer Behaviour
+
+- Timer starts **only after the card is fully closed** — not while the card is open.
+- Default duration: **5 seconds**. Expose this as a single named constant at the top of the file:
+  ```ts
+  const AUTO_ADVANCE_DELAY_MS = 5000;
+  ```
+- If the user manually clicks **any node** before the timer expires, the timer cancels immediately and the clicked node opens instead.
+- Previously completed nodes remain fully clickable at all times — users can revisit any past milestone freely.
+
+### Countdown Visual
+
+During the 5-second countdown, the **next milestone node** on the trajectory should pulse visually — growing brighter and more intense as the seconds count down. This gives the user a clear signal that something is about to happen without displaying a literal number on screen.
+
+The pulse intensity should **increase as the timer approaches zero** — not a static repeating pulse, but one that accelerates and brightens over the 5-second window.
+
+### Implementation Notes
+
+- Use a `useEffect` with a `clearTimeout` cleanup to manage the timer. Store the timer ref in a `useRef` so it can be cancelled cleanly on manual interaction.
+- The pulse animation on the next node should be driven by a Framer Motion `animate` prop that updates scale/opacity based on elapsed time — not a static CSS loop.
+- The "next node" is determined by the current `unlockedIndex` value in the Zustand store.
+
+### Files to Edit
+
+```
+components/simulation/Trajectory.tsx
+components/hud/Challenges.tsx
+store/useStore.ts  (if timer state needs to live globally)
+```
+
+---
+
+## F3 — Role Onboarding: "Systems Online" Sequence
+
+After the user selects their role on the Role Selection screen, instead of the trajectory appearing immediately, the interface **builds itself in staggered layers** — like a cockpit powering up. This sequence ends with a role-specific intro transmission card that onboards the user before they begin.
+
+### Stagger Sequence — In Order
+
+1. Background sharpens or fades into full visibility.
+2. HUD corner elements flicker on — `MISSION STATUS / TELEM_ACTIVE` top left, `COORD_SYSTEM / UTM_WGS84_V2.2` top right.
+3. Earth globe appears in the bottom left.
+4. Moon appears in the top right.
+5. The trajectory SVG path **draws itself** as a line from Earth toward the Moon — like a flight path being plotted on a radar screen.
+6. Milestone nodes **blink on one by one** along the path in sequence.
+7. The intro transmission card **animates in** — slides up from below or fades in at center screen.
+
+**Total sequence duration:** approximately 3–4 seconds. Each layer should have a staggered delay of roughly 300–500ms after the previous. Expose all stagger timings as named constants.
+
+### The Intro Transmission Card
+
+This card uses the **exact same component and visual design** as the existing milestone transmission cards. No new design is needed. Content is role-dependent — read the `role` value from the Zustand store.
+
+#### Mission Control Copy
+
+> In 2025, we mastered the orbit, providing the strategy and certainty of execution that our clients rely on to fund more than three loans every single business day. Your mission today is to serve as the signal through the noise, guiding our brave commanders across the lunar landscape to a successful landing.
+>
+> Initiate Launch Sequence by clicking the launch milestone.
+
+#### Commander Copy
+
+> 2025 was a year of extraordinary transit, where your vision shaped the cityscapes we see today. In a market of shifting gravity and atmospheric pressure, you stayed the course. Your objective today is to reach the moon and secure your project's future with the unwavering guidance of Mission Control.
+>
+> Initiate Launch Sequence by clicking the launch milestone.
+
+### CTA Button
+
+Single button at the bottom of the intro card. Label: **`"INITIATE SEQUENCE"`**. Clicking it dismisses the card and leaves the user on the fully revealed trajectory, ready to interact with the Launch milestone node.
+
+### Session Persistence
+
+This intro card is a **one-time onboarding moment per session**. Once dismissed, it must not reappear if the user navigates back or refreshes mid-session. Add a boolean flag to the Zustand store:
+
+```ts
+hasSeenIntro: false  // set to true when INITIATE SEQUENCE is clicked
+```
+
+### Files to Edit / Create
+
+```
+components/simulation/Viewport.tsx
+components/simulation/RoleSelect.tsx
+store/useStore.ts              — add hasSeenIntro boolean flag
+components/simulation/IntroCard.tsx   — new component (or reuse Challenges.tsx)
+```
+
+---
+
+---
+
+# SECTION 2 — ANIMATION
+
+---
+
+## A1 — Trajectory Travelling Light: "The Comet"
+
+The orbital trajectory path currently feels static. A soft, comet-like streak of light should **continuously travel the SVG path** from Earth to Moon, loop back to the start, and repeat endlessly. This gives the trajectory a sense of life and momentum at all times.
+
+### Visual Description
+
+- A glowing point with a **soft tail that fades behind it** — like a comet or a spacecraft blip on a radar screen.
+- Not a hard sharp dot. The tail should dissolve softly into nothing over a short distance behind the leading point.
+- Color follows the active role:
+  - **Mission Control:** `amg-blue` (#009DD6)
+  - **Commander:** white / off-white (see S3)
+
+### Timing
+
+- **4–6 seconds** to travel the full path from Earth to Moon. Expose as a named constant:
+  ```ts
+  const COMET_DURATION_MS = 5000;
+  ```
+- Loops immediately and continuously — no pause between cycles.
+- Keeps moving **at all times** regardless of what else is on screen. Does not pause when cards are open.
+
+### Implementation Approach
+
+Use SVG path animation. Animate a circle/element along the existing Bézier curve path using CSS `offset-path` and `offset-distance` properties. This is GPU-friendly and avoids animating any layout properties. **Never animate `width`, `height`, `top`, or `left`.**
+
+```css
+.comet {
+  offset-path: path("M ... [trajectory bezier points] ...");
+  offset-distance: 0%;
+  animation: travel 5s linear infinite;
+}
+
+@keyframes travel {
+  from { offset-distance: 0%; }
+  to   { offset-distance: 100%; }
+}
+
+/* Tail effect — use a radial gradient or filter: blur() on a trailing element */
+```
+
+Alternatively, this can be driven via Framer Motion's `useAnimationFrame` if the path points are already available as JS values in `Trajectory.tsx`.
+
+### File to Edit
+
+```
+components/simulation/Trajectory.tsx
+```
+
+---
+
+## A2 — Intro Card: Directional Arrow to Launch Node
+
+Inside the intro transmission card (F3), an animated directional indicator sits **below the body copy and above the CTA button**. It guides the user's eye toward the Launch node on the trajectory without requiring them to search for it.
+
+### Visual Style
+
+- Thin, angular, tactical — consistent with the HUD aesthetic. Think **angular bracket** or a dashed line with a sharp arrowhead. Not a standard cursor arrow or chevron.
+- Should feel like it belongs on a radar or flight display.
+- **Direction:** points down and to the left — toward the Launch node near the Earth globe in the lower left of the trajectory.
+- **Color:** follows the active role — `amg-blue` (#009DD6) for Mission Control, `ici-red` (#D80010) for Commander.
+
+### Animation — Combination Effect
+
+- The arrow **nudges** repeatedly in the direction it is pointing — moving a few pixels toward the Launch node.
+- At the furthest point of each nudge, it **fades slightly** — as if being consumed by the direction it is gesturing toward.
+- Resets and repeats. Continuous loop while the intro card is open.
+- **Timing:** approximately one full nudge cycle every 1.5–2 seconds. Calm and deliberate, not frantic.
+
+### Position in Card
+
+Inside the intro card — **below body copy, above the CTA button**, center-aligned.
+
+### Implementation Notes
+
+Use `transform: translateX / translateY` for the nudge — **never animate margin or padding** as these trigger layout reflow. A small self-contained Framer Motion component is ideal here.
+
+```tsx
+// Conceptual Framer Motion implementation
+<motion.div
+  animate={{
+    x: [0, -6, 0],       // nudge left toward Launch node
+    y: [0, 4, 0],        // nudge down
+    opacity: [1, 0.4, 1],
+  }}
+  transition={{
+    duration: 1.6,
+    repeat: Infinity,
+    ease: "easeInOut",
+  }}
+>
+  {/* SVG tactical arrow / angular bracket element */}
+</motion.div>
+```
+
+### File to Edit
+
+```
+components/simulation/IntroCard.tsx  (or wherever the intro card lives)
+```
+
+---
+
+## A3 — Transmission Decoding: The Number Reveal
+
+This is the **centrepiece animation** of the entire experience. When a user clicks a milestone node and the card opens, the stat value area does not immediately display the real number. Instead it begins as scrambled, flickering digits — like a signal being tuned in — and over approximately 1.5 seconds resolves and locks onto the correct number. Like a satellite acquiring its signal.
+
+This single motion restores everything the quiz mechanic used to provide emotionally, without requiring any effort from the user:
+
+- **Anticipation** — what is the number going to be?
+- **Participation** — I triggered this, I am watching it decode
+- **Reveal** — the lock-in moment is genuinely satisfying
+
+### The Scramble Phase — 0 to ~1200ms
+
+- As soon as the card opens, the number display area shows **rapidly cycling random digits** in place of the real value.
+- Use **wrong numbers only** — not alphanumeric characters. Numbers glitching into other numbers feels more intentional and on-theme than random letters or symbols.
+- The cycling should feel fast and urgent at the start — like static or interference.
+- Each digit position should flicker **independently** at slightly different rates — not in sync — creating a more organic, unstable feel.
+
+### The Resolution Phase — ~1200ms to 1500ms
+
+- The scrambling begins to slow and stabilize, **digit by digit**.
+- Each digit position locks in **sequentially from left to right** — the first digit resolves first, then the second, and so on.
+- Each lock-in should have a micro snap — a very brief brightness spike on that digit as it settles, like a relay clicking into place.
+- The final digit locks last, completing the reveal.
+
+### The Lock-In Moment — ~1500ms to 1800ms
+
+When the final digit resolves, a single, satisfying punctuation moment:
+- A subtle glow bloom outward from the number, **or**
+- A very brief spring scale pulse: `scale 1.0 → 1.04 → 1.0`
+
+Keep this under 300ms. It should feel like a confirmation, not a flourish.
+
+### Timing Summary
+
+| Phase | Start | End | Duration |
+|-------|-------|-----|----------|
+| Card opens → scramble begins | 0ms | 0ms | Immediate |
+| Scramble phase | 0ms | ~1200ms | ~1200ms |
+| Resolution / digit lock-in | ~1200ms | ~1500ms | ~300ms |
+| Lock-in punctuation | ~1500ms | ~1800ms | ~300ms |
+| **Total** | | | **~1800ms** |
+
+Expose all durations as named constants:
+```ts
+const SCRAMBLE_DURATION_MS = 1200;
+const RESOLVE_DURATION_MS = 300;
+const LOCKOUT_DURATION_MS = 300;
+```
+
+### Implementation — useNumberScramble Hook
+
+Build this as a self-contained custom hook that returns a `displayValue` string. The component stays clean and the logic is reusable.
+
+```ts
+// hooks/useNumberScramble.ts
+
+function useNumberScramble(target: string, duration = 1500): string {
+  const [display, setDisplay] = useState("??");
+
+  useEffect(() => {
+    const chars = "0123456789";
+    const steps = 20; // number of scramble frames
+    let frame = 0;
+
+    const interval = setInterval(() => {
+      frame++;
+      const progress = frame / steps;
+      const lockedCount = Math.floor(progress * target.length);
+
+      const scrambled = target
+        .split("")
+        .map((char, i) => {
+          if (i < lockedCount) return char;              // digit is locked in
+          if (char === "%" || char === " ") return char; // preserve symbols
+          return chars[Math.floor(Math.random() * chars.length)]; // scramble
+        })
+        .join("");
+
+      setDisplay(scrambled);
+      if (frame >= steps) clearInterval(interval);
+    }, duration / steps);
+
+    return () => clearInterval(interval);
+  }, [target, duration]);
+
+  return display;
+}
+```
+
+Usage in the card component:
+```tsx
+const displayValue = useNumberScramble(milestone.value, SCRAMBLE_DURATION_MS);
+
+// In JSX — replace static value with displayValue:
+<div className="stat-display">{displayValue}</div>
+```
+
+### Scope — What Animates vs What Doesn't
+
+| Card Element | Behaviour |
+|---|---|
+| Large stat / number display | ✅ Scramble effect applies |
+| Subject heading | ❌ Appears normally on card open |
+| Body copy / description | ❌ Appears normally on card open |
+| CTA button | ❌ Appears normally on card open |
+
+Only the number resolves. Everything else in the card appears as normal when the card opens.
+
+### Files to Edit / Create
+
+```
+components/hud/Challenges.tsx     — apply the hook to the stat display element
+hooks/useNumberScramble.ts        — new custom hook
+```
+
+---
+
+---
+
+# SECTION 3 — STYLING
+
+---
+
+## S1 — Viewport Watermark Logo
+
+A translucent, glass-like version of the Canada ICI logo should appear in the **bottom right corner** of the main 16:9 viewport shell — the container that wraps the entire experience above the background. This provides ambient branding without competing with any foreground content.
+
+### Visual Treatment
+
+- **Opacity:** 8–12%. The logo should feel etched into the glass surface rather than placed on top of it.
+- Render the logo in **white** and use opacity to achieve the translucent effect. Do not use the color version of the logo here.
+- **Position:** bottom right corner of the viewport shell, with a small margin from the edges (~16–20px).
+- **Size:** approximately 80–100px wide. Small enough to feel like a watermark, not a badge.
+
+### Behaviour
+
+Static. Always present regardless of experience state — visible during trajectory view, behind open cards, on the role selection screen, and throughout the entire session. It should **never animate or change**.
+
+### File to Edit
+
+```
+components/simulation/Viewport.tsx
+```
+
+---
+
+## S2 — Transmission Card Header: Pulsing Logo
+
+The small pulsating dot currently sitting next to `"INCOMING TRANSMISSION"` in the card header should be **replaced with a miniature Canada ICI logo** that pulses with a glow effect.
+
+### Visual Treatment
+
+- The logo replaces the dot indicator at the same position and approximate scale — small enough to sit comfortably next to the header text without competing with it.
+- The logo itself remains **fully visible at all times**. It does not fade in and out.
+- A soft light **blooms outward** from the logo rhythmically — a glow pulse — consistent in timing with the existing dot pulse behaviour.
+
+### Glow Color
+
+Reads from the `role` value in the Zustand store:
+
+| Role | Glow Color |
+|---|---|
+| Mission Control | `amg-blue` #009DD6 |
+| Commander | `ici-red` #D80010 |
+
+### Implementation Notes
+
+The glow pulse can be achieved using a `box-shadow` or `filter: drop-shadow()` animation cycling between low and high intensity values. Use Framer Motion `animate` with `repeat: Infinity`. **Animate only the glow outward from the logo — do not animate the opacity of the logo itself.**
+
+```tsx
+<motion.div
+  animate={{
+    filter: [
+      "drop-shadow(0 0 2px #009DD6)",
+      "drop-shadow(0 0 10px #009DD6)",
+      "drop-shadow(0 0 2px #009DD6)",
+    ],
+  }}
+  transition={{ duration: 1.8, repeat: Infinity, ease: "easeInOut" }}
+>
+  <Image src="/assets/logo.svg" ... />
+</motion.div>
+```
+
+### File to Edit
+
+```
+components/hud/Challenges.tsx
+```
+
+---
+
+## S3 — Commander Role: Color Palette Refinement
+
+The current Commander experience uses saturated `ici-red` (#D80010) as the dominant color across all UI elements. This reads as **alarm and urgency** rather than prestige and leadership. The palette should shift so that **white and off-white become the primary UI color**, with red reserved exclusively for deliberate moments of emphasis.
+
+The contrast makes red accents hit harder — when everything is white and one button is red, that button commands the room.
+
+### Commander Color Roles — Before & After
+
+| UI Element | Current | New |
+|---|---|---|
+| Trajectory path | `ici-red` | White / off-white |
+| Node indicators | `ici-red` glow | White / white glow |
+| Card borders & glass highlights | `ici-red` | White / off-white |
+| Comet travelling light | `ici-red` | White / off-white |
+| HUD text & labels | Light (unchanged) | No change |
+| CTA button | `ici-red` | `ici-red` ✅ keep |
+| Active node indicator | `ici-red` | `ici-red` ✅ keep |
+| Pulsing logo glow in card header | `ici-red` | `ici-red` ✅ keep |
+
+### Role Selection Screen
+
+The Commander card on the Role Selection screen must also reflect this refined palette. The current red-dominant card treatment should shift toward **white/off-white with subtle red accents only**.
+
+The visual contrast between the two role cards becomes **"White & Blue"** rather than "Red & Blue":
+- **Mission Control** — retains full `amg-blue` identity
+- **Commander** — takes on a clean, authoritative white character with red used only as punctuation
+
+### Mission Control — No Changes
+
+The `amg-blue` (#009DD6) palette for Mission Control remains **completely unchanged** throughout the entire experience.
+
+### Files to Edit
+
+```
+components/simulation/RoleSelect.tsx
+components/simulation/Trajectory.tsx
+components/hud/Challenges.tsx
+Any component that reads `role` from the Zustand store to apply a color token
+```
+
+---
+
+---
+
+## Color Reference
+
+| Token | Hex | Usage |
+|---|---|---|
+| `ici-red` | `#D80010` | Commander accents, CTA buttons |
+| `amg-blue` | `#009DD6` | Mission Control primary |
+| `ici-grey` | `#313D48` | Borders, inactive states |
+| `ici-navy` | `#00105F` | Deep backgrounds |
+| `ici-light-grey` | `#C8CDD2` | Body text |
+| White | `#FFFFFF` | Commander primary UI |
+
+---
+
+*Canada ICI — Orbit Experience v2.2 — Agent Brief — 2025*
