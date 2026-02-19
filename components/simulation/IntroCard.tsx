@@ -67,7 +67,7 @@ export function IntroCard() {
                         initial="hidden"
                         animate="visible"
                         exit="exit"
-                        className="pointer-events-auto w-[95%] md:w-full max-w-2xl"
+                        className="pointer-events-auto w-[95%] md:w-full max-w-2xl max-h-[90dvh] flex flex-col"
                     >
                         <GlassContainer variant={containerVariant} className="flex flex-col overflow-hidden shadow-2xl">
 
@@ -80,7 +80,7 @@ export function IntroCard() {
                             </div>
 
                             {/* Body — max-h on this div (not outer) is required because GlassContainer's inner wrapper breaks the flex chain */}
-                            <div className="p-4 md:p-8 space-y-3 md:space-y-6 overflow-y-auto max-h-[65dvh] md:max-h-none">
+                            <div className="p-4 md:p-8 space-y-3 md:space-y-6 overflow-y-auto max-h-[60dvh]">
                                 <p className="text-sm md:text-xl font-light text-white leading-relaxed whitespace-pre-line">
                                     {content.body}
                                 </p>

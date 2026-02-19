@@ -39,7 +39,7 @@ export function RoleSelect() {
 
     return (
         // FIX 1: Increased padding (p-6) to fix logo crashing into browser edge
-        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 lg:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md h-[100dvh] overflow-hidden">
+        <div className="absolute inset-0 z-50 flex flex-col items-center justify-center p-6 lg:p-8 pointer-events-auto bg-slate-950/90 backdrop-blur-md h-full overflow-hidden">
 
             <div className="w-full max-w-5xl h-full flex flex-col space-y-4 lg:space-y-8">
 
@@ -74,7 +74,7 @@ export function RoleSelect() {
                 </motion.div>
 
                 {/* CARD CONTAINER: flex-1 allows cards to fill remaining space */}
-                <div className="flex-1 min-h-0 w-full">
+                <div className="flex-1 min-h-0 w-full max-h-[620px] mx-auto">
                     <div className="grid grid-cols-2 gap-3 lg:gap-6 h-full">
                         {cards.map((card, i) => (
                             <motion.button

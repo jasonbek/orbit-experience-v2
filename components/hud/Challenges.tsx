@@ -60,7 +60,7 @@ export function Challenges() {
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    className="pointer-events-auto w-[95%] md:w-full max-w-2xl"
+                    className="pointer-events-auto w-[95%] md:w-full max-w-2xl max-h-[90dvh] flex flex-col"
                 >
                     <GlassContainer variant={containerVariant} className="flex flex-col overflow-hidden shadow-2xl">
 
@@ -100,7 +100,7 @@ export function Challenges() {
                         </div>
 
                         {/* Body — max-h on this div (not outer) because GlassContainer's inner wrapper breaks the flex chain */}
-                        <div className="p-4 md:p-8 space-y-4 md:space-y-6 overflow-y-auto max-h-[65dvh] md:max-h-none">
+                        <div className="p-4 md:p-8 space-y-4 md:space-y-6 overflow-y-auto max-h-[60dvh]">
 
                             {/* Subject + Statement */}
                             <div className="space-y-2">

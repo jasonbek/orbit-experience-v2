@@ -119,27 +119,6 @@ export function Trajectory() {
                 variant={variant}
                 className="relative w-full h-full shadow-2xl border-white/10"
             >
-                {/* --- HUD CORNERS: flicker on during stagger --- */}
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 0.7, 0.2, 0.9, 0.3, 1] }}
-                    transition={{ duration: 0.5, delay: STAGGER_HUD_DELAY_S, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
-                    className="absolute top-3 left-4 pointer-events-none z-20"
-                >
-                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/25">MISSION STATUS</p>
-                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/40">TELEM_ACTIVE</p>
-                </motion.div>
-
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: [0, 0.7, 0.2, 0.9, 0.3, 1] }}
-                    transition={{ duration: 0.5, delay: STAGGER_HUD_DELAY_S, times: [0, 0.2, 0.4, 0.6, 0.8, 1] }}
-                    className="absolute top-3 right-4 pointer-events-none z-20 text-right"
-                >
-                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/25">COORD_SYSTEM</p>
-                    <p className="font-mono text-[9px] uppercase tracking-widest text-white/40">UTM_WGS84_V2.2</p>
-                </motion.div>
-
                 {/* --- LAYER A: PLANETS --- */}
 
                 {/* Earth (Launch) - Bottom Left */}
@@ -182,7 +161,7 @@ export function Trajectory() {
                 <svg
                     viewBox={`0 0 ${width} ${height}`}
                     className="absolute inset-0 w-full h-full z-10 drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]"
-                    preserveAspectRatio="xMidYMid slice"
+                    preserveAspectRatio="xMidYMid meet"
                 >
                     {/* Background Trace */}
                     <path
